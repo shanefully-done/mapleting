@@ -94,47 +94,81 @@ export default function Home() {
 						</CardContent>
 					</Card>
 
-					{/* Features Grid */}
-					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-						<Card>
-							<CardHeader className="pb-3">
-								<div className="flex items-center gap-2">
-									<Smartphone className="h-5 w-5 text-primary" />
-									<CardTitle className="text-base">크로스 플랫폼</CardTitle>
+					{/* Getting Started */}
+					<Card className="border-primary/20 bg-primary/5">
+						<CardHeader>
+							<CardTitle>시작하기</CardTitle>
+							<CardDescription>
+								모니터링 클라이언트를 설치하고 알림을 받아보세요
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-3 text-sm">
+								<div className="flex gap-3">
+									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+										1
+									</div>
+									<div>
+										<p className="font-medium">모니터링 클라이언트 다운로드</p>
+										<p className="text-muted-foreground text-xs mt-1">
+											<a
+												href="https://github.com/shanefully-done/mapleting/releases"
+												target="_blank"
+												rel="noopener noreferrer"
+												className="text-primary hover:underline"
+											>
+												GitHub 릴리즈 페이지
+											</a>{" "}
+											에서 클라이언트 프로그램을 다운로드하세요. 설치 방법은 릴리즈
+											페이지에 자세히 설명되어 있습니다.
+										</p>
+									</div>
 								</div>
-							</CardHeader>
-							<CardContent>
-								<p className="text-sm text-muted-foreground">
-									Android, iOS, Windows, macOS, Linux에서 작동
-								</p>
-							</CardContent>
-						</Card>
-
-						<Card>
-							<CardHeader className="pb-3">
-								<div className="flex items-center gap-2">
-									<Bell className="h-5 w-5 text-primary" />
-									<CardTitle className="text-base">푸시 알림</CardTitle>
+								<div className="flex gap-3">
+									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+										2
+									</div>
+									<div>
+										<p className="font-medium">클라이언트 설정 및 실행</p>
+										<p className="text-muted-foreground text-xs mt-1">
+											설정 파일에 캐릭터 닉네임을 입력하고 클라이언트를 실행하세요.
+											클라이언트가 게임 상태를 감시하기 시작합니다.
+										</p>
+									</div>
 								</div>
-							</CardHeader>
-							<CardContent>
-								<p className="text-sm text-muted-foreground">
-									브라우저가 닫혀 있어도 즉시 알림 수신 (아래에서 앱 설치 필요)
+								<div className="flex gap-3">
+									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+										3
+									</div>
+									<div>
+										<p className="font-medium">알림 구독</p>
+										<p className="text-muted-foreground text-xs mt-1">
+											위에 캐릭터 닉네임을 입력하고 알림을 활성화하세요. 게임이 종료되면
+											즉시 푸시 알림을 받게 됩니다!
+										</p>
+									</div>
+								</div>
+							</div>
+							<div className="pt-2 border-t">
+								<p className="text-xs text-muted-foreground">
+									<strong>💡 모니터링 클라이언트란?</strong> PC에서 실행되는 작은
+									프로그램으로, 에뮬레이터나 기기에서 게임이 실행 중인지 확인하고 서버에
+									알려줍니다.
 								</p>
-							</CardContent>
-						</Card>
-					</div>
+							</div>
+						</CardContent>
+					</Card>
 
 					{/* How it Works */}
 					<Card>
 						<CardHeader>
-							<CardTitle>사용 방법</CardTitle>
+							<CardTitle>알림 구독 방법</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<ol className="list-decimal list-inside space-y-2 text-sm">
 								<li>
-									<strong>캐릭터 닉네임 입력</strong> - 캐릭터가 모니터링 시스템에
-									등록되어 있어야 합니다
+									<strong>캐릭터 닉네임 입력</strong> - 위 입력창에 캐릭터 닉네임을
+									입력하고 "조회" 버튼을 클릭하세요
 								</li>
 								<li>
 									<strong>알림 활성화</strong> - 브라우저에서 푸시 알림을 허용하세요
