@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { decodeNicknameFromUrl } from "@/lib/url-utils";
 import { createClient } from "@/lib/db";
@@ -20,6 +19,9 @@ interface PageProps {
 	params: Promise<{
 		encodedNickname: string;
 	}>;
+	searchParams: Promise<{
+		error?: string;
+	}>;
 }
 
 /**
@@ -38,8 +40,8 @@ export async function generateMetadata({
 		};
 	} catch {
 		return {
-			title: "캐릭터를 찾을 수 없음 - 메이플팅",
-			description: "요청한 캐릭터를 찾을 수 없습니다",
+			title: "메이플팅",
+			description: "캐릭터 모니터링 및 알림 수신",
 		};
 	}
 }
@@ -55,7 +57,7 @@ async function getNicknameData(nickname: string) {
 			.from("nicknames")
 			.select("*")
 			.eq("nickname", nickname)
-			.single();
+			.maybeSingle();
 
 		if (error) {
 			console.error("Error fetching nickname:", error);
@@ -113,19 +115,84 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 	const { encodedNickname } = await params;
 
 	let nickname: string;
+	let decodeError = false;
+	
 	try {
 		nickname = decodeNicknameFromUrl(encodedNickname);
 	} catch (error) {
 		console.error("Failed to decode nickname:", error);
-		notFound();
+		decodeError = true;
+		nickname = encodedNickname; // Use encoded value as fallback for display
 	}
 
 	// Fetch nickname data from database
-	const nicknameData = await getNicknameData(nickname);
+	const nicknameData = !decodeError ? await getNicknameData(nickname) : null;
 
-	// If nickname not found, show 404
-	if (!nicknameData) {
-		notFound();
+	// If nickname not found or invalid, show error page
+	if (decodeError || !nicknameData) {
+		return (
+			<div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+				{/* Header */}
+				<header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+					<div className="container mx-auto px-4 py-6">
+						<Link href="/">
+							<Button variant="ghost" size="sm" className="gap-2">
+								<ArrowLeft className="h-4 w-4" />
+								홈으로
+							</Button>
+						</Link>
+					</div>
+				</header>
+
+				{/* Main Content */}
+				<main className="container mx-auto px-4 py-12">
+					<div className="max-w-2xl mx-auto">
+						{/* Error Card */}
+						<Card className="border-destructive/50 bg-destructive/10">
+							<CardHeader>
+								<div className="flex items-start gap-3">
+									<XCircle className="h-6 w-6 text-destructive flex-shrink-0 mt-1" />
+									<div className="space-y-2">
+										<CardTitle className="text-destructive">
+											{decodeError ? "잘못된 닉네임 형식" : "캐릭터를 찾을 수 없음"}
+										</CardTitle>
+										<CardDescription>
+											{decodeError
+												? "입력된 닉네임 형식이 올바르지 않습니다."
+												: `"${nickname}" 캐릭터를 찾을 수 없습니다.`}
+										</CardDescription>
+									</div>
+								</div>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								{!decodeError && (
+									<div className="p-4 rounded-lg bg-muted/50">
+										<p className="text-sm">
+											<span className="font-semibold">가능한 이유:</span>
+										</p>
+										<ul className="text-sm text-muted-foreground list-disc list-inside space-y-1 mt-2">
+											<li>모니터링 클라이언트가 실행 중이지 않습니다</li>
+											<li>닉네임이 올바르지 않습니다</li>
+											<li>아직 모니터링이 시작되지 않았습니다</li>
+										</ul>
+									</div>
+								)}
+								<div className="flex flex-col sm:flex-row gap-2">
+									<Link href="/" className="flex-1">
+										<Button className="w-full">홈으로 가기</Button>
+									</Link>
+									<Link href="/setup" className="flex-1">
+										<Button variant="outline" className="w-full">
+											설정 가이드 보기
+										</Button>
+									</Link>
+								</div>
+							</CardContent>
+						</Card>
+					</div>
+				</main>
+			</div>
+		);
 	}
 
 	const isConnected = nicknameData.last_status === "connected";

@@ -12,8 +12,10 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { encodeNicknameForUrl } from "@/lib/url-utils";
-import { Bell } from "lucide-react";
+import { Bell, BookOpen, ArrowRight } from "lucide-react";
 import { PWAInstallBanner } from "@/components/pwa-install-button";
+import { ErrorAlertWithSuspense } from "@/components/error-alert";
+import Link from "next/link";
 
 export default function Home() {
 	const [nickname, setNickname] = useState("");
@@ -42,17 +44,26 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
 			{/* Header */}
 			<header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-				<div className="container mx-auto px-4 py-6">
+				<div className="container mx-auto px-4 py-6 flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<Bell className="h-6 w-6 text-primary" />
 						<h1 className="text-xl font-bold">MapleTing</h1>
 					</div>
+					<Link href="/setup">
+						<Button variant="outline" size="sm" className="gap-2">
+							<BookOpen className="h-4 w-4" />
+							설정 가이드
+						</Button>
+					</Link>
 				</div>
 			</header>
 
 			{/* Main Content */}
 			<main className="container mx-auto px-4 py-12">
 				<div className="max-w-4xl mx-auto space-y-12">
+					{/* Error Alert */}
+					<ErrorAlertWithSuspense />
+
 					{/* Hero Section */}
 					<div className="text-center space-y-4">
 						<h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -79,7 +90,7 @@ export default function Home() {
 									placeholder="캐릭터 닉네임 입력 (예: 에스프레소)"
 									value={nickname}
 									onChange={(e) => setNickname(e.target.value)}
-									onKeyPress={handleKeyPress}
+									onKeyDown={handleKeyPress}
 									disabled={isLoading}
 									className="flex-1"
 								/>
@@ -94,7 +105,7 @@ export default function Home() {
 						</CardContent>
 					</Card>
 
-					{/* Getting Started */}
+					{/* Setup Guide CTA */}
 					<Card className="border-primary/20 bg-primary/5">
 						<CardHeader>
 							<CardTitle>시작하기</CardTitle>
@@ -102,60 +113,18 @@ export default function Home() {
 								모니터링 클라이언트를 설치하고 알림을 받아보세요
 							</CardDescription>
 						</CardHeader>
-						<CardContent className="space-y-4">
-							<div className="space-y-3 text-sm">
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										1
-									</div>
-									<div>
-										<p className="font-medium">모니터링 클라이언트 다운로드</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											<a
-												href="https://github.com/shanefully-done/mapleting/releases"
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-primary hover:underline"
-											>
-												GitHub 릴리즈 페이지
-											</a>{" "}
-											에서 클라이언트 프로그램을 다운로드하세요. 설치 방법은 릴리즈
-											페이지에 자세히 설명되어 있습니다.
-										</p>
-									</div>
-								</div>
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										2
-									</div>
-									<div>
-										<p className="font-medium">클라이언트 설정 및 실행</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											설정 파일에 캐릭터 닉네임을 입력하고 클라이언트를 실행하세요.
-											클라이언트가 게임 상태를 감시하기 시작합니다.
-										</p>
-									</div>
-								</div>
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										3
-									</div>
-									<div>
-										<p className="font-medium">알림 구독</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											위에 캐릭터 닉네임을 입력하고 알림을 활성화하세요. 게임이 종료되면
-											즉시 푸시 알림을 받게 됩니다!
-										</p>
-									</div>
-								</div>
-							</div>
-							<div className="pt-2 border-t">
-								<p className="text-xs text-muted-foreground">
-									<strong>💡 모니터링 클라이언트란?</strong> PC에서 실행되는 작은
-									프로그램으로, 에뮬레이터나 기기에서 게임이 실행 중인지 확인하고 서버에
-									알려줍니다.
-								</p>
-							</div>
+						<CardContent>
+							<p className="text-sm text-muted-foreground mb-4">
+								메이플팅은 PC에서 실행되는 모니터링 클라이언트와 함께 작동합니다.
+								ADB 설정 및 클라이언트 설치 방법을 확인하세요.
+							</p>
+							<Link href="/setup">
+								<Button className="w-full sm:w-auto gap-2">
+									<BookOpen className="h-4 w-4" />
+									설정 가이드 보기
+									<ArrowRight className="h-4 w-4" />
+								</Button>
+							</Link>
 						</CardContent>
 					</Card>
 
@@ -166,6 +135,10 @@ export default function Home() {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<ol className="list-decimal list-inside space-y-2 text-sm">
+								<li>
+									<strong>설정 가이드 확인</strong> - 모니터링 클라이언트를
+									설치하고 설정하세요
+								</li>
 								<li>
 									<strong>캐릭터 닉네임 입력</strong> - 위 입력창에 캐릭터 닉네임을
 									입력하고 &ldquo;조회&rdquo; 버튼을 클릭하세요
