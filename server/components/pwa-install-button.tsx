@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { Download, X } from 'lucide-react';
+import { Download, X, Share2, Plus } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -108,11 +108,23 @@ export function PWAInstallButton() {
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <Download className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-            <div className="flex-1 space-y-2">
-              <p className="text-sm font-medium">앱으로 설치</p>
-              <p className="text-xs text-muted-foreground">
-                iOS에 설치하려면 공유 버튼을 탭한 후 &quot;홈 화면에 추가&quot;를 선택하세요.
-              </p>
+            <div className="flex-1 space-y-3">
+              <div>
+                <p className="text-sm font-medium">앱으로 설치</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  iOS 기기에서 최상의 앱 경험을 누리세요
+                </p>
+              </div>
+              <div className="rounded-lg bg-background p-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Share2 className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="font-medium">공유 버튼을 탭하세요</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Plus className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="font-medium">&quot;홈 화면에 추가&quot;를 선택하세요</span>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>

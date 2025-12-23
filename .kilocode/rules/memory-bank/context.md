@@ -19,7 +19,7 @@ The project is in the **architecture and specification phase**. We are analyzing
 
 ### Next Steps
 1. Test PWA install button on different browsers (Chrome, Safari, Firefox)
-2. Verify install prompt appears correctly on iOS devices
+2. Verify install prompt appears correctly on iOS devices with new visual prompts
 3. Test that button hides when app is installed
 4. Consider adding PWA install button to header for more visibility
 
