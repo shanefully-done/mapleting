@@ -3,11 +3,11 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., v1.0.0)'
+        description: "Release version (e.g., v1.0.0)"
         required: true
         type: string
 
@@ -15,24 +15,24 @@ jobs:
   build-windows:
     name: Build Windows Binary
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install PyInstaller
         run: pip install pyinstaller
-        
+
       - name: Build Windows executable
         run: |
           cd client
-          pyinstaller monitor.spec --onefile
-          
+          pyinstaller --onefile monitor.py
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
@@ -43,24 +43,24 @@ jobs:
   build-macos:
     name: Build macOS Binary
     runs-on: macos-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          
+          python-version: "3.11"
+
       - name: Install PyInstaller
         run: pip install pyinstaller
-        
+
       - name: Build macOS executable
         run: |
           cd client
-          pyinstaller monitor.spec --onefile
-          
+          pyinstaller --onefile monitor.py
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
@@ -74,25 +74,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: monitor-windows
           path: ./artifacts/windows
-          
+
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
         with:
           name: monitor-macos
           path: ./artifacts/macos
-          
+
       - name: Determine version
         id: version
         run: |
@@ -103,14 +103,14 @@ jobs:
           fi
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Release version: ${VERSION}"
-          
+
       - name: Create checksums
         run: |
           cd artifacts
           sha256sum windows/monitor.exe > checksums.txt
           sha256sum macos/monitor >> checksums.txt
           cat checksums.txt
-          
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -124,35 +124,35 @@ jobs:
             artifacts/checksums.txt
           body: |
             ## MapleTing Monitor ${{ steps.version.outputs.version }}
-            
+
             ### Downloads
-            
+
             - **Windows**: `monitor.exe`
             - **macOS**: `monitor`
-            
+
             ### Installation
-            
+
             1. Download the binary for your platform
             2. Place it in your desired directory
             3. Create a `config.json` file in the same directory (see `config.json.example`)
             4. Run the binary
-            
+
             ### Verification
-            
+
             Use the provided `checksums.txt` to verify the integrity of your download:
-            
+
             ```bash
             # Linux/macOS
             shasum -a 256 -c checksums.txt
-            
+
             # Windows (PowerShell)
             Get-FileHash monitor.exe -Algorithm SHA256
             ```
-            
+
             ### Configuration
-            
+
             Copy `config.json.example` to `config.json` and edit with your settings:
-            
+
             ```json
             {
               "server_url": "https://your-server.com",
@@ -172,18 +172,18 @@ jobs:
     needs: [build-windows, build-macos]
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Configure Git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          
+
       - name: Create and push tag
         run: |
           VERSION="${{ github.event.inputs.version }}"
