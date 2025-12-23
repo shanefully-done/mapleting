@@ -1,6 +1,0 @@
-{
-	"server_url": "https://mapleting.vercel.app",
-	"nickname": "내_게임_닉네임",
-	"package_name": "com.nexon.ma",
-	"check_interval_seconds": 60
-}

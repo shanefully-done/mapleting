@@ -7,17 +7,20 @@ The project is in the **architecture and specification phase**. We are analyzing
 ## Project Status
 
 ### Completed
+
 - ✅ Python monitoring client implemented with Telegram integration
 - ✅ Client configuration system with JSON-based config
 - ✅ ADB-based app status detection
 - ✅ Heartbeat monitoring with state transition detection
 
 ### In Progress
+
 - 🔄 Designing Next.js PWA server architecture
 - 🔄 Defining API contracts between Python client and Next.js server
 - 🔄 Planning migration strategy from Telegram to Web Push
 
 ### Next Steps
+
 1. Test PWA install button on different browsers (Chrome, Safari, Firefox)
 2. Verify install prompt appears correctly on iOS devices with new visual prompts
 3. Test that button hides when app is installed
@@ -26,24 +29,28 @@ The project is in the **architecture and specification phase**. We are analyzing
 ## Recent Changes
 
 ### Current Implementation (Python Client)
-- **File**: [`client/monitor.py`](client/monitor.py:1)
+
+- **File**: [`client/mapleting.py`](client/mapleting.py:1)
 - **Functionality**: Monitors Android app status via ADB
 - **Notification**: Sends Telegram messages on state transitions
 - **Configuration**: JSON-based config file (`config.json`)
 
 ### Configuration Structure
+
 ```json
 {
-  "telegram_token": "...",
-  "telegram_chat_id": "...",
-  "nickname": "mekiuser",
-  "package_name": "com.nexon.ma",
-  "check_interval_seconds": 3
+	"telegram_token": "...",
+	"telegram_chat_id": "...",
+	"nickname": "mekiuser",
+	"package_name": "com.nexon.ma",
+	"check_interval_seconds": 3
 }
 ```
 
 ### Migration Requirements
+
 The Python client will be modified to:
+
 - Replace Telegram API calls with HTTP POST to `/api/heartbeat`
 - Use per-nickname secret instead of bot token
 - Include timestamp in heartbeat payload
@@ -54,11 +61,13 @@ The Python client will be modified to:
 The system consists of three main components:
 
 1. **Python Client Agent** ([`client/`](client/))
+
    - Monitors Android app status via ADB
    - Sends heartbeat updates to server
    - Stateless, minimal dependencies
 
 2. **Next.js Server** (to be implemented in [`server/`](server/))
+
    - Receives heartbeat from Python clients
    - Manages nickname entities and subscriptions
    - Sends push notifications via Web Push API

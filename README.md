@@ -69,19 +69,27 @@ bun dev
 # Navigate to client directory
 cd client
 
-# Copy configuration template and edit config.json with your settings
-cp config.json [your_dist_dir]
+# Run the setup wizard (creates mapleting_config.json)
+python mapleting.py
 ```
 
-**Configuration (`config.json`):**
+**The setup wizard will prompt you for:**
+
+- 캐릭터/플레이어 이름 (Character/Player name)
+- 서버 주소 (Server URL)
+- 패키지 이름 (Package name)
+- 체크 간격 (Check interval)
+
+**Important:** After setup, the wizard will generate a unique secret key. You must register this nickname and secret with your server administrator to receive notifications.
+
+**Configuration file (`mapleting_config.json`) is auto-generated:**
 
 ```json
 {
-	"server_url": "https://your-server.com",
-	"alias": "테스트-장치-01",
-	"secret": "your-per-alias-secret",
+	"server_url": "https://mapleting.vercel.app",
+	"nickname": "내_게임_닉네임",
 	"package_name": "com.nexon.ma",
-	"check_interval_seconds": 3
+	"check_interval_seconds": 60
 }
 ```
 
@@ -91,11 +99,21 @@ cp config.json [your_dist_dir]
 # Verify ADB connection
 adb devices
 
-# Run the monitor
-python monitor.py
+# Run mapleting (will start monitoring automatically)
+python mapleting.py
 ```
 
-### 4. Subscribe to Notifications
+### 4. Build Standalone Executable (Optional)
+
+```bash
+# Build with PyInstaller
+pyinstaller --onefile mapleting.py
+
+# Run the executable
+./mapleting
+```
+
+### 5. Subscribe to Notifications
 
 1. Open your deployed server URL in a browser
 2. Click "Subscribe" for your device alias
@@ -119,7 +137,8 @@ python monitor.py
 
 - **Language**: Python 3.8+ (stdlib only)
 - **Monitoring**: ADB (Android Debug Bridge)
-- **Packaging**: PyInstaller for standalone executables
+- **Packaging**: PyInstaller for standalone executables (binary name: `mapleting`)
+- **Setup**: Interactive wizard for initial configuration
 
 ### Infrastructure
 

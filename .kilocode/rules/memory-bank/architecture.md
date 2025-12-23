@@ -13,7 +13,7 @@ The monitoring and notification system follows a three-tier architecture:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Python Client Agent                      │
-│                         [client/monitor.py]                      │
+│                         [client/mapleting.py]                      │
 ├─────────────────────────────────────────────────────────────────┤
 │  - ADB Interface: Checks app status via `adb shell ps`          │
 │  - State Machine: Tracks running → stopped transitions          │
@@ -410,7 +410,7 @@ CREATE INDEX idx_subscriptions_nicknameId ON subscriptions(nicknameId);
 ```
 mapleting/
 ├── client/                          # Python monitoring agent
-│   ├── monitor.py                   # Main monitoring script
+│   ├── mapleting.py                   # Main monitoring script
 │   ├── config.json                  # Client configuration
 │
 ├── server/                          # Next.js PWA (to be implemented)

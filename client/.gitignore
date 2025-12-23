@@ -214,3 +214,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# MapleTing configuration (contains secret)
+mapleting_config.json

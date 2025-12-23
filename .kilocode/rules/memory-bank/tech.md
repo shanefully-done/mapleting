@@ -90,7 +90,7 @@ NODE_ENV="development"
 cd client
 # No dependencies to install (stdlib only)
 # Build executable:
-pyinstaller --onefile monitor.py
+pyinstaller --onefile mapleting.py
 ```
 
 #### Server Setup

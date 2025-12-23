@@ -31,7 +31,7 @@ jobs:
       - name: Build Windows executable
         run: |
           cd client
-          pyinstaller --onefile monitor.py
+          pyinstaller --onefile mapleting.py
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -59,7 +59,7 @@ jobs:
       - name: Build macOS executable
         run: |
           cd client
-          pyinstaller --onefile monitor.py
+          pyinstaller --onefile mapleting.py
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
