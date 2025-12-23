@@ -1,0 +1,3 @@
+[submodule ".kilocode"]
+	path = .kilocode
+	url = git@github.com:shanefully-done/kilocode-rules.git

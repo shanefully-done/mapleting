@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate PWA Icons</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .icon-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .icon-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .icon-item img {
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      background: #000;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mapleting Monitor - Icon Generator</h1>
+  <p>Click the button below to generate and download PWA icons:</p>
+  <button onclick="generateIcons()">Generate Icons</button>
+  <div id="previews" class="icon-preview"></div>
+
+  <script>
+    function createIcon(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#000000');
+      gradient.addColorStop(1, '#333333');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+
+      // Draw "M" letter
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${size * 0.5}px system-ui, -apple-system, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('M', size / 2, size / 2);
+
+      // Draw device monitoring icon (simple pulse)
+      const pulseSize = size * 0.1;
+      const pulseX = size * 0.75;
+      const pulseY = size * 0.75;
+      
+      ctx.strokeStyle = '#4CAF50';
+      ctx.lineWidth = size * 0.02;
+      ctx.beginPath();
+      ctx.arc(pulseX, pulseY, pulseSize, 0, 2 * Math.PI);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#4CAF50';
+      ctx.beginPath();
+      ctx.arc(pulseX, pulseY, pulseSize * 0.4, 0, 2 * Math.PI);
+      ctx.fill();
+
+      return canvas;
+    }
+
+    function generateIcons() {
+      const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+      const previews = document.getElementById('previews');
+      previews.innerHTML = '';
+
+      sizes.forEach(size => {
+        const canvas = createIcon(size);
+        
+        // Create preview
+        const item = document.createElement('div');
+        item.className = 'icon-item';
+        
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/png');
+        img.width = 128;
+        img.height = 128;
+        
+        const label = document.createElement('p');
+        label.textContent = `${size}x${size}`;
+        
+        const downloadBtn = document.createElement('a');
+        downloadBtn.href = canvas.toDataURL('image/png');
+        downloadBtn.download = `icon-${size}x${size}.png`;
+        downloadBtn.textContent = 'Download';
+        downloadBtn.style.display = 'inline-block';
+        downloadBtn.style.marginTop = '10px';
+        downloadBtn.style.padding = '8px 16px';
+        downloadBtn.style.background = '#000';
+        downloadBtn.style.color = '#fff';
+        downloadBtn.style.textDecoration = 'none';
+        downloadBtn.style.borderRadius = '4px';
+        
+        item.appendChild(img);
+        item.appendChild(label);
+        item.appendChild(document.createElement('br'));
+        item.appendChild(downloadBtn);
+        previews.appendChild(item);
+      });
+    }
+
+    // Auto-generate on load
+    window.onload = generateIcons;
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+	"server_url": "http://localhost:3000",
+	"nickname": "에스프레소",
+	"package_name": "com.nexon.ma",
+	"check_interval_seconds": 60
+}

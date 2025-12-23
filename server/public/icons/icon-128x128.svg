@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#333333;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="128" height="128" fill="url(#grad)" rx="12.8" ry="12.8"/>
+  
+  <!-- Letter M -->
+  <text x="50%" y="50%" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-weight="bold" 
+        font-size="64" 
+        fill="#ffffff" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        dy="6.4">M</text>
+  
+  <!-- Pulse indicator -->
+  <circle cx="96" cy="96" r="12.8" 
+          fill="none" 
+          stroke="#4CAF50" 
+          stroke-width="2.56"/>
+  <circle cx="96" cy="96" r="5.12" 
+          fill="#4CAF50"/>
+</svg>
