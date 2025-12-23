@@ -29,9 +29,7 @@ export default function SetupPage() {
 				<div className="max-w-4xl mx-auto space-y-8">
 					{/* Page Title */}
 					<div className="text-center space-y-2">
-						<h1 className="text-3xl font-bold tracking-tight">
-							설정 가이드
-						</h1>
+						<h1 className="text-3xl font-bold tracking-tight">설정 가이드</h1>
 						<p className="text-muted-foreground">
 							모니터링 클라이언트 설치 및 설정 방법
 						</p>
@@ -47,15 +45,14 @@ export default function SetupPage() {
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm">
 							<p>
-								메이플팅은 PC에서 실행되는 모니터링 클라이언트와 웹 푸시
-								알림을 통해, 에뮬레이터나 기기에서 메이플스토리가 완전히
-								튕긴 경우 알림을 받을 수 있는 서비스입니다.
+								메이플팅은 PC에서 실행되는 모니터링 클라이언트와 웹 푸시 알림을 통해,
+								에뮬레이터나 기기에서 메이플스토리가 완전히 튕긴 경우 알림을 받을 수
+								있는 서비스입니다.
 							</p>
 							<p className="text-muted-foreground">
-								<strong>💡 모니터링 클라이언트란?</strong> PC에서 실행되는
-								작은 프로그램으로, ADB(Android Debug Bridge)를 사용하여
-								에뮬레이터나 기기에서 게임이 실행 중인지 확인하고 서버에
-								알려줍니다.
+								<strong>💡 모니터링 클라이언트란?</strong> PC에서 실행되는 작은
+								프로그램으로, ADB(Android Debug Bridge)를 사용하여 에뮬레이터나 기기에서
+								게임이 실행 중인지 확인하고 서버에 알려줍니다.
 							</p>
 						</CardContent>
 					</Card>
@@ -68,21 +65,16 @@ export default function SetupPage() {
 								ADB 설정 (필수)
 							</CardTitle>
 							<CardDescription>
-								모니터링 클라이언트는 ADB를 사용하여 에뮬레이터의 게임 상태를
-								확인합니다
+								모니터링 클라이언트는 ADB를 사용하여 에뮬레이터의 게임 상태를 확인합니다
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-6">
 							{/* Windows ADB Setup */}
 							<div className="space-y-3">
-								<h3 className="font-semibold text-base">
-									1. ADB 설치 (Windows)
-								</h3>
+								<h3 className="font-semibold text-base">1. ADB 설치 (Windows)</h3>
 								<ol className="list-decimal list-inside space-y-3 text-sm">
 									<li className="pl-2">
-										<span className="font-medium">
-											Android Platform Tools 다운로드
-										</span>
+										<span className="font-medium">Android Platform Tools 다운로드</span>
 										<div className="mt-1 ml-4 text-muted-foreground">
 											<a
 												href="https://developer.android.com/tools/releases/platform-tools"
@@ -96,9 +88,7 @@ export default function SetupPage() {
 										</div>
 									</li>
 									<li className="pl-2">
-										<span className="font-medium">
-											압축 해제 및 폴더 이동
-										</span>
+										<span className="font-medium">압축 해제 및 폴더 이동</span>
 										<div className="mt-1 ml-4 text-muted-foreground space-y-1">
 											<p>• 다운로드한 zip 파일을 압축 해제합니다</p>
 											<p>• 폴더를 C:\adb 경로로 이동합니다</p>
@@ -108,31 +98,20 @@ export default function SetupPage() {
 										</div>
 									</li>
 									<li className="pl-2">
-										<span className="font-medium">
-											환경 변수 (PATH) 설정
-										</span>
+										<span className="font-medium">환경 변수 (PATH) 설정</span>
 										<div className="mt-1 ml-4 text-muted-foreground space-y-2">
 											<p>
 												<strong>방법 1: 시스템 설정 (권장)</strong>
 											</p>
 											<ol className="list-[lower-alpha] list-inside ml-4 space-y-1 text-xs">
+												<li>Windows 키 + R → sysdm.cpl 입력 → Enter</li>
+												<li>[고급] 탭 → [환경 변수] 버튼 클릭</li>
 												<li>
-													Windows 키 + R → sysdm.cpl 입력 → Enter
+													&ldquo;사용자 변수&rdquo; 또는 &ldquo;시스템 변수&rdquo;에서 Path
+													선택 → [편집]
 												</li>
-												<li>
-													[고급] 탭 → [환경 변수] 버튼 클릭
-												</li>
-												<li>
-													&ldquo;사용자 변수&rdquo; 또는 &ldquo;시스템 변수&rdquo;에서 Path 선택 →
-													[편집]
-												</li>
-												<li>
-													[새로 만들기] → C:\adb 입력 → [확인]
-												</li>
-												<li>
-													모든 창을 닫고 새로운 명령 프롬프트(cmd)를
-													엽니다
-												</li>
+												<li>[새로 만들기] → C:\adb 입력 → [확인]</li>
+												<li>모든 창을 닫고 새로운 명령 프롬프트(cmd)를 엽니다</li>
 											</ol>
 											<p className="mt-2">
 												<strong>방법 2: PowerShell (일시적)</strong>
@@ -152,9 +131,7 @@ export default function SetupPage() {
 											<div className="bg-muted p-2 rounded text-xs font-mono">
 												adb version
 											</div>
-											<p className="text-xs">
-												버전 정보가 출력되면 설치 완료입니다
-											</p>
+											<p className="text-xs">버전 정보가 출력되면 설치 완료입니다</p>
 										</div>
 									</li>
 								</ol>
@@ -162,9 +139,7 @@ export default function SetupPage() {
 
 							{/* macOS ADB Setup */}
 							<div className="space-y-3">
-								<h3 className="font-semibold text-base">
-									2. ADB 설치 (macOS)
-								</h3>
+								<h3 className="font-semibold text-base">2. ADB 설치 (macOS)</h3>
 								<ol className="list-decimal list-inside space-y-3 text-sm">
 									<li className="pl-2">
 										<span className="font-medium">Homebrew로 설치</span>
@@ -200,9 +175,7 @@ export default function SetupPage() {
 
 							{/* Linux ADB Setup */}
 							<div className="space-y-3">
-								<h3 className="font-semibold text-base">
-									3. ADB 설치 (Linux)
-								</h3>
+								<h3 className="font-semibold text-base">3. ADB 설치 (Linux)</h3>
 								<ol className="list-decimal list-inside space-y-2 text-sm">
 									<li className="pl-2">
 										<span className="font-medium">Ubuntu/Debian:</span>
@@ -243,8 +216,8 @@ export default function SetupPage() {
 								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
 									<p className="font-medium text-sm">Android Studio 에뮬레이터</p>
 									<p className="text-xs text-muted-foreground">
-										Android Studio 에뮬레이터는 기본적으로 ADB가 활성화되어
-										있습니다. 추가 설정이 필요하지 않습니다.
+										Android Studio 에뮬레이터는 기본적으로 ADB가 활성화되어 있습니다. 추가
+										설정이 필요하지 않습니다.
 									</p>
 								</div>
 
@@ -252,13 +225,9 @@ export default function SetupPage() {
 								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
 									<p className="font-medium text-sm">LDPlayer</p>
 									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>
-											LDPlayer 설정 (키보드 아이콘 또는 Ctrl + 3) 열기
-										</li>
+										<li>LDPlayer 설정 (키보드 아이콘 또는 Ctrl + 3) 열기</li>
 										<li>[기타] 탭 선택</li>
-										<li>
-											&ldquo;Android 디버그 브리지(ADB) 활성화&rdquo; 체크
-										</li>
+										<li>&ldquo;Android 디버그 브리지(ADB) 활성화&rdquo; 체크</li>
 										<li>에뮬레이터 재시작</li>
 										<li>기본 포트: 5555 (LDPlayer 3/4), 5555 (LDPlayer 9)</li>
 									</ol>
@@ -272,9 +241,7 @@ export default function SetupPage() {
 								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
 									<p className="font-medium text-sm">NoxPlayer</p>
 									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>
-											NoxPlayer 설정 (톱니바퀴 아이콘 또는 Ctrl + 5) 열기
-										</li>
+										<li>NoxPlayer 설정 (톱니바퀴 아이콘 또는 Ctrl + 5) 열기</li>
 										<li>[일반] 탭 선택</li>
 										<li>&ldquo;개발자 옵션 활성화&rdquo; 체크</li>
 										<li>에뮬레이터 재시작</li>
@@ -307,9 +274,7 @@ export default function SetupPage() {
 								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
 									<p className="font-medium text-sm">MEmu Play</p>
 									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>
-											MEmu 설정 (오른쪽 사이드바 톱니바퀴 아이콘) 열기
-										</li>
+										<li>MEmu 설정 (오른쪽 사이드바 톱니바퀴 아이콘) 열기</li>
 										<li>[Android 설정] 탭 선택</li>
 										<li>&ldquo;ADB 디버깅&rdquo; 활성화</li>
 										<li>에뮬레이터 재시작</li>
@@ -324,9 +289,7 @@ export default function SetupPage() {
 
 							{/* Verify ADB Connection */}
 							<div className="space-y-3">
-								<h3 className="font-semibold text-base">
-									5. ADB 연결 확인
-								</h3>
+								<h3 className="font-semibold text-base">5. ADB 연결 확인</h3>
 								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
 									<p className="text-sm">명령 프롬프트/터미널에서 다음을 실행:</p>
 									<div className="bg-background p-2 rounded text-xs font-mono space-y-1">
@@ -359,9 +322,7 @@ export default function SetupPage() {
 										1
 									</div>
 									<div>
-										<p className="font-medium">
-											모니터링 클라이언트 다운로드
-										</p>
+										<p className="font-medium">모니터링 클라이언트 다운로드</p>
 										<p className="text-muted-foreground text-xs mt-1">
 											<a
 												href="https://github.com/shanefully-done/mapleting/releases"
@@ -371,8 +332,7 @@ export default function SetupPage() {
 											>
 												GitHub 릴리즈 페이지
 											</a>{" "}
-											에서 운영체제에 맞는 클라이언트 프로그램을
-											다운로드하세요.
+											에서 운영체제에 맞는 클라이언트 프로그램을 다운로드하세요.
 										</p>
 									</div>
 								</div>
@@ -381,40 +341,53 @@ export default function SetupPage() {
 										2
 									</div>
 									<div>
-										<p className="font-medium">config.json 설정</p>
+										<p className="font-medium">클라이언트 실행 및 초기 설정</p>
 										<p className="text-muted-foreground text-xs mt-1">
-											다운로드한 폴더에 있는 config.json 파일을 메모장으로
-											엽니다:
+											터미널/명령 프롬프트에서 클라이언트 파일이 있는 폴더로 이동 후
+											실행합니다:
 										</p>
-										<div className="mt-2 bg-muted p-3 rounded text-xs font-mono">
-											<span className="text-muted-foreground"># &ldquo;server_url&rdquo;:</span> &ldquo;서버URL&rdquo;,
+										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono">
+											# Windows:
 											<br />
-											<span className="text-muted-foreground"># &ldquo;nickname&rdquo;:</span> &ldquo;캐릭터닉네임&rdquo;,
+											monitor.exe
 											<br />
-											<span className="text-muted-foreground"># &ldquo;secret&rdquo;:</span> &ldquo;서버에서받은시크릿키&rdquo;,
 											<br />
-											<span className="text-muted-foreground"># &ldquo;package_name&rdquo;:</span> &ldquo;com.nexon.ma&rdquo;,
+											# macOS/Linux:
 											<br />
-											<span className="text-muted-foreground"># &ldquo;check_interval_seconds&rdquo;:</span> 3
+											chmod +x monitor
+											<br />
+											./monitor
 										</div>
-										<div className="mt-2 space-y-1 text-xs text-muted-foreground">
-											<p>
-												• <code className="bg-muted px-1 rounded">nickname</code>:
-												모니터링할 캐릭터 닉네임
-											</p>
-											<p>
-												• <code className="bg-muted px-1 rounded">secret</code>:
-												서버에서 발급받은 시크릿 키 (초기 설정 시 필요)
-											</p>
-											<p>
-												• <code className="bg-muted px-1 rounded">package_name</code>:
-												메이플스토리 패키지명 (기본값: com.nexon.ma)
-											</p>
-											<p>
-												• <code className="bg-muted px-1 rounded">check_interval_seconds</code>:
-												상태 확인 간격 (초, 기본값: 3)
+										<div className="mt-3 space-y-2 text-xs text-muted-foreground">
+											<p className="font-medium text-foreground">
+												📋 첫 실행 시 자동 설정이 시작됩니다.
 											</p>
 										</div>
+									</div>
+								</div>
+								<div className="flex gap-3">
+									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted-foreground text-muted-foreground flex items-center justify-center text-xs font-bold">
+										3
+									</div>
+									<div>
+										<p className="font-medium text-muted-foreground">
+											모니터링 시작 확인
+										</p>
+										<p className="text-muted-foreground text-xs mt-1">
+											클라이언트가 정상적으로 실행되면 다음과 같은 메시지가 표시됩니다:
+										</p>
+										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono space-y-1">
+											<p>============================================================</p>
+											<p>✓ 설정 완료! 모니터링을 시작합니다...</p>
+											<p>============================================================</p>
+											<p>🔍 모니터링 시작: 에스프레소 (com.nexon.ma)</p>
+											<p>📱 체크 간격: 60초</p>
+											<p>🌐 서버: https://mapleting.vercel.app</p>
+											<p>중지하려면 Ctrl+C를 누르세요</p>
+										</div>
+										<p className="text-xs text-muted-foreground mt-2">
+											터미널 창을 닫지 말고 계속 실행해 두세요.
+										</p>
 									</div>
 								</div>
 								<div className="flex gap-3">
@@ -424,8 +397,7 @@ export default function SetupPage() {
 									<div>
 										<p className="font-medium">클라이언트 실행</p>
 										<p className="text-muted-foreground text-xs mt-1">
-											터미널/명령 프롬프트에서 클라이언트 파일이 있는
-											폴더로 이동 후:
+											터미널/명령 프롬프트에서 클라이언트 파일이 있는 폴더로 이동 후:
 										</p>
 										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono">
 											# Windows:
@@ -467,15 +439,15 @@ export default function SetupPage() {
 									를 클릭하세요
 								</li>
 								<li className="pl-2">
-									<strong>캐릭터 닉네임 입력</strong> - 입력창에 캐릭터 닉네임을
-									입력하고 &ldquo;조회&rdquo; 버튼을 클릭하세요
+									<strong>캐릭터 닉네임 입력</strong> - 입력창에 캐릭터 닉네임을 입력하고
+									&ldquo;조회&rdquo; 버튼을 클릭하세요
 								</li>
 								<li className="pl-2">
 									<strong>알림 활성화</strong> - 브라우저에서 푸시 알림을 허용하세요
 								</li>
 								<li className="pl-2">
-									<strong>앱으로 설치</strong> - 모바일은 홈 화면에 추가하여
-									앱처럼 사용하세요 (PWA)
+									<strong>앱으로 설치</strong> - 모바일은 홈 화면에 추가하여 앱처럼
+									사용하세요 (PWA)
 								</li>
 								<li className="pl-2">
 									<strong>알림 수신</strong> - 디바이스가 오프라인되면 즉시 알림을
@@ -484,8 +456,8 @@ export default function SetupPage() {
 							</ol>
 							<div className="pt-2 border-t">
 								<p className="text-xs text-muted-foreground">
-									<strong>💡 참고</strong> 모바일에서는 앱으로 설치해야 브라우저가
-									꺼져 있거나 백그라운드 상태에서도 알림을 받을 수 있습니다.
+									<strong>💡 참고</strong> 모바일에서는 앱으로 설치해야 브라우저가 꺼져
+									있거나 백그라운드 상태에서도 알림을 받을 수 있습니다.
 								</p>
 							</div>
 						</CardContent>
@@ -498,8 +470,8 @@ export default function SetupPage() {
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm text-muted-foreground">
 							<p>
-								<strong>ADB 연결이 안 될 때:</strong> 에뮬레이터에서 ADB
-								디버깅이 활성화되어 있는지 확인하고, 에뮬레이터를 재시작해 보세요.
+								<strong>ADB 연결이 안 될 때:</strong> 에뮬레이터에서 ADB 디버깅이
+								활성화되어 있는지 확인하고, 에뮬레이터를 재시작해 보세요.
 							</p>
 							<p>
 								<strong>알림이 안 올 때:</strong> 브라우저의 알림 권한을 확인하고,
@@ -533,7 +505,5 @@ export default function SetupPage() {
 }
 
 function Separator({ className }: { className?: string }) {
-	return (
-		<div className={`border-t ${className}`} />
-	);
+	return <div className={`border-t ${className}`} />;
 }
