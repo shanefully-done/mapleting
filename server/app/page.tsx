@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { encodeNicknameForUrl } from "@/lib/url-utils";
-import { Bell, BookOpen, ArrowRight } from "lucide-react";
+import { Bell, BookOpen, ArrowRight, Github, Globe } from "lucide-react";
 import { PWAInstallBanner } from "@/components/pwa-install-button";
 import { ErrorAlertWithSuspense } from "@/components/error-alert";
 import Link from "next/link";
@@ -164,8 +164,30 @@ export default function Home() {
 
 			{/* Footer */}
 			<footer className="border-t mt-12">
-				<div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-					<p>MapleTing - 크로스 플랫폼 디바이스 모니터링 시스템</p>
+				<div className="container mx-auto px-4 py-6">
+					<div className="flex flex-col items-center gap-4 text-sm text-muted-foreground">
+						<p>© {new Date().getFullYear()} Shane Lx. All rights reserved.</p>
+						<div className="flex items-center gap-4">
+							<a
+								href="https://github.com/shanefully-done/mapleting"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+							>
+								<Github className="h-4 w-4" />
+								<span>GitHub</span>
+							</a>
+							<a
+								href="https://www.ixtj.dev/"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+							>
+								<Globe className="h-4 w-4" />
+								<span>Blog</span>
+							</a>
+						</div>
+					</div>
 				</div>
 			</footer>
 		</div>
