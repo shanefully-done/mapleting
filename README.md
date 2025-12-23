@@ -1,213 +1,49 @@
 # MapleTing
 
-A cross-platform monitoring and notification system that enables real-time alerts for Android application state changes. Replace Telegram notifications with modern web push notifications that work on Android, iOS 16.4+, Windows, macOS, and Linux.
+<div align="center">
+
+**A cross-platform monitoring and notification system for Android applications**
+
+[Features](#-key-features) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Documentation](#-documentation)
+
+</div>
+
+---
+
+## 📖 Overview
+
+MapleTing is a comprehensive monitoring and notification system that enables real-time alerts for Android application state changes. It uses **Web Push API** for notification, delivering native OS notifications across all major platforms.
+
+**Perfect for:** Game client monitoring, app crash detection, device status tracking, and any scenario where you need instant alerts when Android apps stop running.
+
+### Why MapleTing?
+
+- **🌍 Cross-Platform**: Works on Android, iOS 16.4+, Windows, macOS, and Linux
+- **🔔 Native Notifications**: OS-integrated push that work even when browser/app is closed
+- **🌐 Unicode-First**: Full UTF-8 support for non-English alias (Korean, Japanese, Chinese, etc.)
+- **📦 PWA Installable**: Install as native app on any supported platform
+- **🪶 Lightweight Monitor Client**: Python agent uses only standard library
+
+---
+
+## ✨ Key Features
+
+- ✅ **PWA Experience**: Install as native app
+- ✅ **Background Notifications**: Receive alerts when app is closed
+- ✅ **Simple Subscription**: One-click subscription to device updates
+- ✅ **Unicode Support**: Device names in any language
+
+---
 
 ## 🚀 Quick Start
 
-### For Server Administrators
+### Prerequisites
 
-1. **Deploy the Next.js Server**:
+- **Server**: Node.js 18.17+, Bun package manager, Supabase account
+- **Client**: Python 3.8+, ADB (Android Debug Bridge)
+- **Android Device**: USB debugging enabled
 
-   ```bash
-   cd server
-   bun install
-   cp .env.local.example .env.local
-   # Edit .env.local with your Supabase and VAPID credentials
-   bun dev
-   ```
-
-2. **Set Up Database**:
-
-   - Create a project at [supabase.com](https://supabase.com/)
-   - Run the SQL schema from [`server/lib/schema.sql`](server/lib/schema.sql:1)
-   - Configure environment variables
-
-3. **Deploy to Vercel**:
-   ```bash
-   cd server
-   vercel
-   ```
-
-📖 **Full Server Setup Guide**: [`server/README.md`](server/README.md:1)
-
-### For Python Client Users
-
-1. **Clone and Configure**:
-
-   ```bash
-   cd client
-   cp config.json.example config.json
-   # Edit config.json with your server URL and credentials
-   python monitor.py
-   ```
-
-2. **Install ADB**:
-
-   - Download from [developer.android.com](https://developer.android.com/tools/releases/platform-tools)
-   - Enable USB debugging on your Android device
-   - Verify connection: `adb devices`
-
-3. **Start Monitoring**:
-   ```bash
-   python monitor.py
-   ```
-
-📖 **Full Client Setup Guide**: [`client/README.md`](client/README.md:1)
-
-## 📋 Overview
-
-MapleTing is a complete monitoring system consisting of:
-
-- **Python Client Agent**: Monitors Android apps via ADB and sends heartbeats
-- **Next.js PWA Server**: Receives heartbeats and manages push notifications
-- **Web Push API**: Delivers notifications to subscribers across all platforms
-
-### Key Features
-
-✅ **Cross-Platform Push Notifications** - Works on Android, iOS 16.4+, Windows, macOS, and Linux  
-✅ **PWA Installability** - Install as native app on supported platforms  
-✅ **UTF-8 First Design** - Full Unicode support for non-English nicknames  
-✅ **Real-Time Monitoring** - Instant notifications on state changes  
-✅ **Self-Hosted** - No external messaging service dependencies  
-✅ **Lightweight Client** - Uses only Python standard library  
-✅ **Type-Safe Server** - Full TypeScript implementation  
-✅ **Supabase Integration** - Managed PostgreSQL with excellent DX
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Python Client Agent                      │
-│                         [client/monitor.py]                      │
-├─────────────────────────────────────────────────────────────────┤
-│  - ADB Interface: Checks app status via `adb shell ps`          │
-│  - State Machine: Tracks running → stopped transitions          │
-│  - HTTP Client: POSTs heartbeats to Next.js server              │
-│  - Config: JSON-based (nickname, package, secret, interval)     │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              │ HTTPS POST
-                              │ /api/heartbeat
-                              │ Authorization: Bearer <secret>
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      Next.js API Server                          │
-│                      [server/app/api/]                          │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  /api/heartbeat                                          │   │
-│  │  - Authenticate via Bearer token                         │   │
-│  │  - Resolve nickname → internal ID                        │   │
-│  │  - Detect state transitions                             │   │
-│  │  - Trigger push notifications                           │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  /api/subscribe                                          │   │
-│  │  - Store push subscription (endpoint + keys)             │   │
-│  │  - Link subscription to nickname                         │   │
-│  │  - Handle non-English nicknames (UTF-8)                 │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  /api/unsubscribe                                        │   │
-│  │  - Remove push subscription                             │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  Data Layer                                              │   │
-│  │  - Nickname entities (id, nickname, secret, lastStatus)  │   │
-│  │  - Push subscriptions (endpoint, p256dh, auth)           │   │
-│  │  - Storage: Supabase Postgres                            │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              │ Web Push API
-                              │ (VAPID)
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      PWA Frontend                                │
-│                      [server/app/]                               │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  Pages/Components                                       │   │
-│  │  - /n/[nickname] - Nickname detail page                 │   │
-│  │  - Subscription UI - Push permission + form             │   │
-│  │  - Status display - Current device status               │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  Service Worker [public/sw.js]                          │   │
-│  │  - push event handler                                   │   │
-│  │  - notificationclick handler                            │   │
-│  │  - Background sync support                              │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │  Manifest [public/manifest.json]                        │   │
-│  │  - UTF-8 encoded                                        │   │
-│  │  - Non-ASCII app name support                           │   │
-│  │  - PWA installability metadata                          │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              │ Push Notification
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      User Devices                                │
-│  Android • iOS 16.4+ • Windows • macOS • Linux                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## 🎯 Use Cases
-
-- **Game Server Monitoring**: Track mobile game instances for downtime
-- **App Crash Detection**: Get notified when apps crash or stop unexpectedly
-- **Device Status Tracking**: Monitor application status across multiple devices
-- **Service Availability**: Ensure critical services are running
-- **Non-English Environments**: Full support for Korean, Japanese, Chinese, and other languages
-
-## 📱 Platform Support
-
-| Platform | Works  | Notes                   |
-| -------- | ------ | ----------------------- |
-| Android  | ✅ Yes | Chrome, Firefox         |
-| iOS      | ✅ Yes | iOS 16.4+ (Safari)      |
-| Windows  | ✅ Yes | Chrome, Firefox, Edge   |
-| macOS    | ✅ Yes | Chrome, Firefox, Safari |
-| Linux    | ✅ Yes | Chrome, Firefox         |
-
-### Browser Support
-
-- Chrome 80+
-- Firefox 80+
-- Safari 16.4+
-- Edge 80+
-
-## 🔧 Technology Stack
-
-### Client (Python)
-
-- **Language**: Python 3.8+
-- **Monitoring**: ADB (Android Debug Bridge)
-- **Communication**: HTTPS POST to heartbeat API
-- **Dependencies**: Python standard library only
-- **Packaging**: PyInstaller for standalone executables
-
-### Server (Next.js)
-
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Database**: Supabase Postgres
-- **Push Notifications**: Web Push API with VAPID
-- **PWA**: Service Worker + Web Manifest
-- **Styling**: Tailwind CSS + shadcn/ui
-
-## 📚 Documentation
-
-- **Server Setup**: [`server/README.md`](server/README.md:1) - Complete server installation and configuration
-- **Client Setup**: [`client/README.md`](client/README.md:1) - Python client installation and usage
-- **Deployment Guide**: [`DEPLOYMENT.md`](DEPLOYMENT.md:1) - Production deployment instructions
-- **API Reference**: [`server/API.md`](server/API.md:1) - API endpoint documentation
-
-## 🚀 Getting Started
-
-### 1. Set Up the Server
+### 1. Deploy the Server
 
 ```bash
 # Navigate to server directory
@@ -216,169 +52,140 @@ cd server
 # Install dependencies
 bun install
 
-# Generate VAPID keys
-npx web-push generate-vapid-keys
+# Generate VAPID keys for Web Push
+bunx web-push generate-vapid-keys
 
-# Create environment file
-cp .env.local.example .env.local
-# Edit .env.local with your credentials
+# Set up environment (see full docs for details)
+# Edit .env.local with your Supabase and VAPID credentials
+cp .env.example .env.local
 
 # Start development server
 bun dev
 ```
 
-### 2. Set Up the Database
-
-1. Create a project at [supabase.com](https://supabase.com/)
-2. Navigate to SQL Editor
-3. Run the schema from [`server/lib/schema.sql`](server/lib/schema.sql:1)
-4. Get your Supabase credentials from Settings → API
-
-### 3. Configure the Python Client
+### 2. Set Up the Python Client
 
 ```bash
 # Navigate to client directory
 cd client
 
-# Copy example configuration
-cp config.json.example config.json
-
-# Edit config.json with your settings
+# Copy configuration template and edit config.json with your settings
+cp config.json [your_dist_dir]
 ```
 
-Configuration example:
+**Configuration (`config.json`):**
 
 ```json
 {
 	"server_url": "https://your-server.com",
-	"nickname": "테스트-장치-01",
-	"secret": "your-per-nickname-secret",
+	"alias": "테스트-장치-01",
+	"secret": "your-per-alias-secret",
 	"package_name": "com.nexon.ma",
 	"check_interval_seconds": 3
 }
 ```
 
-### 4. Start Monitoring
+### 3. Start Monitoring
 
 ```bash
-# Ensure ADB is installed and device is connected
+# Verify ADB connection
 adb devices
 
-# Start the monitor
+# Run the monitor
 python monitor.py
 ```
 
-## 🔑 Key Features Explained
+### 4. Subscribe to Notifications
 
-### UTF-8 First Design
+1. Open your deployed server URL in a browser
+2. Click "Subscribe" for your device alias
+3. Allow push notifications when prompted
+4. You'll receive alerts when the app stops running!
 
-All text handling in MapleTing assumes UTF-8 encoding:
+---
 
-- Nicknames can be in any language (Korean, Japanese, Chinese, etc.)
-- Database stores UTF-8 text natively
-- API payloads are UTF-8 encoded JSON
-- Push notifications display Unicode correctly
+## 🛠️ Technology Stack
 
-### State Transition Detection
+### Server (Next.js PWA)
 
-The Python client monitors app state transitions:
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Database**: Supabase Postgres
+- **Push Notifications**: Web Push API with VAPID
+- **UI**: Tailwind CSS + shadcn/ui components
+- **PWA**: Service Worker + Web Manifest
 
-- **Running → Stopped**: Triggers push notification to all subscribers
-- **Stopped → Running**: Logged to console (no notification)
-- **Continuous Monitoring**: Checks every N seconds (configurable)
+### Client (Python Agent)
 
-### Push Notification Flow
+- **Language**: Python 3.8+ (stdlib only)
+- **Monitoring**: ADB (Android Debug Bridge)
+- **Packaging**: PyInstaller for standalone executables
 
+### Infrastructure
+
+- **Hosting**: Vercel (recommended) or self-hosted
+- **Database**: Supabase (free tier works)
+- **SSL/TLS**: Required for Web Push API
+
+---
+
+## 🎯 Use Cases
+
+- **Game Client Monitoring**: Track mobile game instances for downtime
+- **App Crash Detection**: Get notified when apps crash or stop unexpectedly
+- **Device Status Tracking**: Monitor application status across multiple devices
+- **Service Availability**: Ensure critical services are running 24/7
+- **Non-English Environments**: Full support for Korean, Japanese, Chinese, and other languages
+
+---
+
+## 🚀 Deployment Options
+
+### Vercel (Recommended)
+
+One-click deployment with automatic SSL, CDN, and scaling:
+
+```bash
+cd server
+vercel
 ```
-1. Python Client detects: running → stopped
-   ↓
-2. POST /api/heartbeat with status="disconnected"
-   ↓
-3. Server detects transition: connected → disconnected
-   ↓
-4. Query subscriptions by nicknameId
-   ↓
-5. For each subscription:
-   a. Build payload (UTF-8 encoded)
-   b. Send via web-push library
-   c. Handle errors (expired endpoints → delete)
-   ↓
-6. Service Worker receives push event
-   ↓
-7. Display notification with Unicode text
-   ↓
-8. User clicks notification
-   ↓
-9. Open /n?nickname=<encoded>
-```
 
-### Security Model
+**Advantages:**
 
-- **Per-Nickname Secrets**: Each monitored device has a unique secret
-- **Bearer Token Authentication**: `Authorization: Bearer <secret>` header
-- **Constant-Time Comparison**: Prevents timing attacks on secrets
-- **Rate Limiting**: Per-nickname rate limiting on heartbeat endpoint
-- **No User Auth Required**: Optional feature for future (OAuth)
+- Zero configuration
+- Automatic HTTPS
+- Global CDN
+- Free tier available
+- Perfect for Next.js
 
-## 📦 Project Structure
-
-```
-mapleting/
-├── client/                          # Python monitoring agent
-│   ├── monitor.py                   # Main monitoring script
-│   ├── config.json                  # Client configuration (not in git)
-│   ├── config.json.example          # Configuration template
-│   ├── monitor.spec                 # PyInstaller spec
-│   ├── package_list.txt             # Reference package list
-│   └── README.md                    # Client documentation
-│
-├── server/                          # Next.js PWA server
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── heartbeat/           # POST /api/heartbeat
-│   │   │   ├── subscribe/           # POST /api/subscribe
-│   │   │   └── unsubscribe/         # POST /api/unsubscribe
-│   │   ├── n/[encodedNickname]/     # Nickname detail pages
-│   │   ├── layout.tsx               # Root layout
-│   │   └── page.tsx                 # Home page
-│   ├── components/
-│   │   └── subscription-button.tsx  # Push subscription UI
-│   ├── lib/
-│   │   ├── db.ts                    # Supabase client
-│   │   ├── push-client.ts           # Web Push API client
-│   │   ├── push.ts                  # Push utilities
-│   │   ├── types.ts                 # TypeScript types
-│   │   ├── url-utils.ts             # URL encoding utilities
-│   │   ├── repositories/            # Data access layer
-│   │   │   ├── nickname-repository.ts
-│   │   │   └── subscription-repository.ts
-│   │   └── schema.sql               # Database schema
-│   ├── public/
-│   │   ├── manifest.json            # PWA manifest
-│   │   ├── sw.js                    # Service worker
-│   │   └── icons/                   # PWA icons
-│   ├── package.json
-│   └── README.md                    # Server documentation
-│
-├── DEPLOYMENT.md                    # Deployment guide
-└── README.md                        # This file
-```
+---
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+### Development Workflow
 
-MIT License - See LICENSE file for details
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-## 🔗 Links
+### Areas for Contribution
 
-- **Next.js**: [https://nextjs.org](https://nextjs.org)
-- **Supabase**: [https://supabase.com](https://supabase.com)
-- **Web Push API**: [https://developer.mozilla.org/en-US/docs/Web/API/Push_API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
-- **PWA**: [https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+- Additional language support
+- Enhanced PWA features
+- Performance optimizations
+- Documentation improvements
+- Bug fixes
 
 ---
 
-**Built with ❤️ for cross-platform monitoring**
+## 🔗 Links & Resources
+
+- **Next.js**: [https://nextjs.org](https://nextjs.org)
+- **Supabase**: [https://supabase.com](https://supabase.com)
+- **Web Push API**: [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+- **PWA**: [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+- **Vercel**: [https://vercel.com](https://vercel.com)

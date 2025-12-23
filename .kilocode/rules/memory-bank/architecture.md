@@ -85,41 +85,45 @@ The monitoring and notification system follows a three-tier architecture:
 ## Data Model
 
 ### Nickname Entity
+
 Represents a monitored Android application/device.
 
 ```typescript
 interface Nickname {
-  id: string;              // UUID (primary key)
-  nickname: string;        // UTF-8, arbitrary Unicode (NOT used as PK)
-  lastStatus: "connected" | "disconnected";
-  lastSeenAt: number;      // Unix timestamp
-  secret: string;          // Shared secret for client authentication
-  createdAt: number;       // Unix timestamp
+	id: string; // UUID (primary key)
+	nickname: string; // UTF-8, arbitrary Unicode (NOT used as PK)
+	lastStatus: "connected" | "disconnected";
+	lastSeenAt: number; // Unix timestamp
+	secret: string; // Shared secret for client authentication
+	createdAt: number; // Unix timestamp
 }
 ```
 
 **Critical Design Decisions:**
+
 - `nickname` is UTF-8 text, NOT a database identifier
 - UUID `id` used as primary key to avoid Unicode issues
 - Secret used for authentication (not password hashing)
 - Exact string matching for nicknames (no normalization)
 
 ### Push Subscription Entity
+
 Represents a user's push notification subscription for a nickname.
 
 ```typescript
 interface PushSubscription {
-  id: string;              // UUID
-  nicknameId: string;      // FK to Nickname.id
-  endpoint: string;        // Push service endpoint URL
-  p256dh: string;          // ECDH P-256 public key
-  auth: string;            // Authentication secret
-  userAgent: string;       // Browser user agent
-  createdAt: number;       // Unix timestamp
+	id: string; // UUID
+	nicknameId: string; // FK to Nickname.id
+	endpoint: string; // Push service endpoint URL
+	p256dh: string; // ECDH P-256 public key
+	auth: string; // Authentication secret
+	userAgent: string; // Browser user agent
+	createdAt: number; // Unix timestamp
 }
 ```
 
 **Relationships:**
+
 - One nickname can have multiple subscriptions
 - One subscription belongs to exactly one nickname
 - Subscription is linked to nickname via `nicknameId` (UUID)
@@ -127,31 +131,36 @@ interface PushSubscription {
 ## API Contracts
 
 ### POST /api/heartbeat
+
 **From**: Python client agent  
 **Purpose**: Report application status
 
 **Request Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <nickname-secret>
 ```
 
 **Request Body:**
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "status": "connected",
-  "timestamp": 1734850000
+	"nickname": "테스트-장치-01",
+	"status": "connected",
+	"timestamp": 1734850000
 }
 ```
 
 **Response:**
+
 - `200 OK` - Heartbeat processed
 - `401 Unauthorized` - Invalid secret
 - `404 Not Found` - Nickname not registered
 - `500 Internal Server Error` - Server error
 
 **Behavior:**
+
 1. Authenticate via `Authorization: Bearer <secret>`
 2. Resolve `nickname` → internal UUID via exact string match
 3. Detect state transition: `connected` → `disconnected`
@@ -159,59 +168,68 @@ Authorization: Bearer <nickname-secret>
 5. Update `lastStatus` and `lastSeenAt`
 
 **Critical Rules:**
+
 - Treat `nickname` as opaque UTF-8 text
 - MUST NOT assume ASCII
 - MUST NOT URL-decode nickname field
 - MUST store and compare as UTF-8 string
 
 ### POST /api/subscribe
+
 **From**: Browser/PWA  
 **Purpose**: Subscribe to notifications for a nickname
 
 **Request Body:**
+
 ```json
 {
-  "nickname": "テスト-장치-01",
-  "subscription": {
-    "endpoint": "https://fcm.googleapis.com/...",
-    "keys": {
-      "p256dh": "B...",
-      "auth": "A..."
-    }
-  }
+	"nickname": "テスト-장치-01",
+	"subscription": {
+		"endpoint": "https://fcm.googleapis.com/...",
+		"keys": {
+			"p256dh": "B...",
+			"auth": "A..."
+		}
+	}
 }
 ```
 
 **Response:**
+
 - `200 OK` - Subscription created
 - `400 Bad Request` - Invalid payload
 - `404 Not Found` - Nickname doesn't exist
 - `409 Conflict` - Already subscribed
 
 **Behavior:**
+
 1. Validate nickname exists (exact UTF-8 match)
 2. Store push subscription details
 3. Link subscription to nickname via UUID
 4. Return subscription ID
 
 ### POST /api/unsubscribe
+
 **From**: Browser/PWA  
 **Purpose**: Cancel push notifications
 
 **Request Body:**
+
 ```json
 {
-  "subscriptionId": "uuid"
+	"subscriptionId": "uuid"
 }
 ```
 
 **Response:**
+
 - `200 OK` - Unsubscribed
 - `404 Not Found` - Subscription not found
 
 ## URL Routing Strategy
 
 ### Nickname Pages
+
 **Problem**: Raw Unicode in URLs breaks across browsers/service workers
 
 **Solution**: Base64-URL encoding
@@ -223,6 +241,7 @@ Avoid: /n/테스트 (breaks Safari, service workers)
 ```
 
 **Implementation:**
+
 ```typescript
 // Encode
 const encoded = base64urlEncode(new TextEncoder().encode(nickname));
@@ -260,18 +279,19 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 
 ```json
 {
-  "title": "Device disconnected",
-  "body": "테스트-장치-01 is offline",
-  "nickname": "テ스트-장치-01",
-  "status": "disconnected",
-  "timestamp": 1734850000,
-  "data": {
-    "nicknameEncoded": "JUVDJUIwJUJEJUI4..."
-  }
+	"title": "Device disconnected",
+	"body": "테스트-장치-01 is offline",
+	"nickname": "テ스트-장치-01",
+	"status": "disconnected",
+	"timestamp": 1734850000,
+	"data": {
+		"nicknameEncoded": "JUVDJUIwJUJEJUI4..."
+	}
 }
 ```
 
 **Rules:**
+
 - UTF-8 encoded JSON
 - No truncation of Unicode text
 - Include encoded nickname for click handling
@@ -280,20 +300,24 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 ## Security Model
 
 ### Authentication
+
 - **Client Authentication**: Per-nickname secret via `Authorization: Bearer`
 - **Constant-time comparison**: Prevent timing attacks on secrets
 - **No user authentication**: Optional feature for future (OAuth)
 
 ### Authorization
+
 - **Secret scope**: Each secret valid for one nickname only
 - **Subscription scope**: Any user can subscribe to any nickname (public monitoring)
 
 ### Rate Limiting
+
 - **Endpoint**: `/api/heartbeat`
 - **Strategy**: Per-nickname rate limiting (prevent spam)
 - **Implementation**: Token bucket or sliding window
 
 ### Data Protection
+
 - **Secrets**: Never log secrets, use constant-time comparison
 - **Push keys**: Store as encrypted strings in database
 - **UTF-8 handling**: Never truncate or modify Unicode text
@@ -301,17 +325,20 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 ## Error Handling
 
 ### Client (Python) Failures
+
 - **Network error**: Retry with exponential backoff
 - **Invalid secret**: Log error, exit with clear message
 - **Missing nickname**: Log error, suggest registration
 
 ### Server (Next.js) Failures
+
 - **Duplicate heartbeat**: Update timestamp, skip notification
 - **Out-of-order timestamps**: Use latest timestamp
 - **Expired push endpoint**: Auto-delete subscription, log error
 - **Unicode errors**: Reject request, return 400 Bad Request
 
 ### Service Worker Failures
+
 - **Push delivery failure**: Silent fail (browser handles retry)
 - **Notification display**: Fallback to basic notification
 - **Click handler**: Gracefully handle malformed URLs
@@ -319,21 +346,25 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 ## Design Patterns
 
 ### 1. Event-Driven Architecture
+
 - Heartbeat events trigger state transitions
 - State transitions trigger push notifications
 - Loose coupling between components
 
 ### 2. Stateless Client
+
 - Python agent has no persistent state
 - All state stored server-side
 - Easy to restart/migrate clients
 
 ### 3. Pub/Sub Pattern
+
 - Nicknames are "topics"
 - Subscribers receive notifications on state changes
 - One-to-many notification delivery
 
 ### 4. Repository Pattern
+
 - Data access abstracted from API routes
 - Postgres with connection pooling
 - Centralized business logic
@@ -341,17 +372,20 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 ## Performance Considerations
 
 ### Database Indexes
+
 ```sql
 CREATE INDEX idx_nicknames_nickname ON nicknames(nickname);
 CREATE INDEX idx_subscriptions_nicknameId ON subscriptions(nicknameId);
 ```
 
 ### Push Notification Batching
+
 - Send notifications in parallel (not serial)
 - Use `Promise.all()` for concurrent requests
 - Timeout individual push requests (5s)
 
 ### Caching Strategy
+
 - Cache nickname → UUID resolution (in-memory)
 - TTL: 5 minutes
 - Invalidate on nickname updates
@@ -359,11 +393,13 @@ CREATE INDEX idx_subscriptions_nicknameId ON subscriptions(nicknameId);
 ## Scalability
 
 ### Current Scope (MVP)
+
 - Single Next.js server
 - Supabase Postgres database
 - Suitable for < 1000 nicknames, < 10000 subscriptions
 
 ### Future Scaling
+
 - Add load balancer → multiple Next.js instances
 - Add Redis (Upstash) for caching/pub/sub
 - Implement queue for push notification delivery
@@ -376,8 +412,6 @@ mapleting/
 ├── client/                          # Python monitoring agent
 │   ├── monitor.py                   # Main monitoring script
 │   ├── config.json                  # Client configuration
-│   ├── monitor.spec                 # PyInstaller spec
-│   └── package_list.txt             # Reference package list
 │
 ├── server/                          # Next.js PWA (to be implemented)
 │   ├── app/
@@ -414,28 +448,33 @@ mapleting/
 ## Key Technical Decisions Rationale
 
 ### Why UTF-8 First?
+
 - Non-English users are primary target (Korean, Japanese, Chinese)
 - Prevents data corruption across the stack
 - Avoids complex normalization logic
 
 ### Why Web Push Over WebSocket?
+
 - Works when browser/app is closed
 - Better battery life on mobile
 - Native OS notification integration
 - Scales better (no persistent connections)
 
 ### Why Per-Nickname Secrets?
+
 - Simpler than full user authentication
 - Sufficient for server-to-server auth
 - Easy to migrate from Telegram bot tokens
 
 ### Why Next.js?
+
 - Unified frontend + backend
 - Excellent PWA support
 - Easy deployment (Vercel, self-hosted)
 - TypeScript support
 
 ### Why Supabase?
+
 - Managed Postgres with excellent developer experience
 - Application-generated UUIDs work perfectly
 - CHECK constraints for data validation
