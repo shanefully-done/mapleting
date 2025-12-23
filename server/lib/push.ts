@@ -230,11 +230,15 @@ export function createNotificationPayload(
 
 /**
  * Validate a push subscription object
- * 
+ *
  * @param subscription - Subscription object to validate
  * @returns true if valid, false otherwise
  */
-export function validateSubscription(subscription: PushSubscription): boolean {
+export function validateSubscription(subscription: {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+}): boolean {
   try {
     return !!(
       subscription.endpoint &&

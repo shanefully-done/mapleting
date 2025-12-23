@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       auth: subscription.keys.auth,
     };
 
-    if (!validateSubscription(subscriptionObject as { endpoint: string; p256dh: string; auth: string })) {
+    if (!validateSubscription(subscriptionObject)) {
       return NextResponse.json(
         { error: "Bad Request: Invalid subscription format" },
         { status: 400 }

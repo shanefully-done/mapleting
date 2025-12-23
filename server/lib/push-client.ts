@@ -66,7 +66,7 @@ export async function subscribeToPush(): Promise<PushSubscription> {
   // Get VAPID public key from environment
   // In Next.js, NEXT_PUBLIC_ vars are available on the client side
   const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
-                         (typeof window !== 'undefined' && (window as Record<string, unknown>).__NEXT_PUBLIC_VAPID_PUBLIC_KEY as string);
+                         (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).__NEXT_PUBLIC_VAPID_PUBLIC_KEY as string);
   
   if (!vapidPublicKey) {
     console.error('VAPID public key not found. Available env vars:', Object.keys(process.env).filter(k => k.includes('VAPID')));
