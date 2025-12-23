@@ -26,12 +26,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const nickname = decodeNicknameFromUrl(encodedNickname);
     return {
       title: `${nickname} - Mapleting`,
-      description: `Monitor and receive notifications for ${nickname}`,
+      description: `${nickname} 모니터링 및 알림 수신`,
     };
   } catch {
     return {
-      title: 'Device Not Found - Mapleting',
-      description: 'The requested device could not be found',
+      title: '디바이스를 찾을 수 없음 - Mapleting',
+      description: '요청한 디바이스를 찾을 수 없습니다',
     };
   }
 }
@@ -67,8 +67,8 @@ async function getNicknameData(nickname: string) {
 function formatTimestamp(timestamp: number): string {
   const date = new Date(timestamp);
   
-  // Format: "Dec 23, 2025 at 5:07 PM"
-  return new Intl.DateTimeFormat('en-US', {
+  // Format: "2025년 12월 23일 오후 5:07"
+  return new Intl.DateTimeFormat('ko-KR', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -91,13 +91,13 @@ function getRelativeTime(timestamp: number): string {
   const days = Math.floor(hours / 24);
   
   if (seconds < 60) {
-    return 'just now';
+    return '방금 전';
   } else if (minutes < 60) {
-    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    return `${minutes}분 전`;
   } else if (hours < 24) {
-    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    return `${hours}시간 전`;
   } else {
-    return `${days} day${days !== 1 ? 's' : ''} ago`;
+    return `${days}일 전`;
   }
 }
 
@@ -132,7 +132,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back to Home
+              홈으로
             </Button>
           </Link>
         </div>
@@ -147,7 +147,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="text-2xl">{nickname}</CardTitle>
-                  <CardDescription>Device monitoring and notifications</CardDescription>
+                  <CardDescription>디바이스 모니터링 및 알림</CardDescription>
                 </div>
                 <Badge 
                   variant={isConnected ? "default" : "destructive"}
@@ -156,12 +156,12 @@ export default async function NicknameDetailPage({ params }: PageProps) {
                   {isConnected ? (
                     <>
                       <CheckCircle2 className="h-3.5 w-3.5" />
-                      Connected
+                      연결됨
                     </>
                   ) : (
                     <>
                       <XCircle className="h-3.5 w-3.5" />
-                      Disconnected
+                      연결 끊김
                     </>
                   )}
                 </Badge>
@@ -174,16 +174,16 @@ export default async function NicknameDetailPage({ params }: PageProps) {
                   {isConnected ? (
                     <>
                       <span className="font-semibold text-green-600 dark:text-green-400">
-                        Device is online
+                        디바이스가 온라인 상태입니다
                       </span>
-                      {' '}and functioning normally. You will receive a notification if it goes offline.
+                      {' '}정상 작동 중입니다. 오프라인되면 알림을 받게 됩니다.
                     </>
                   ) : (
                     <>
                       <span className="font-semibold text-red-600 dark:text-red-400">
-                        Device is offline
+                        디바이스가 오프라인 상태입니다
                       </span>
-                      {' '}and may need attention. You will be notified when it comes back online.
+                      {' '}점검이 필요할 수 있습니다. 다시 온라인되면 알림을 받게 됩니다.
                     </>
                   )}
                 </p>
@@ -193,7 +193,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span>
-                  Last seen: {relativeTime} ({formattedTime})
+                  마지막 확인: {relativeTime} ({formattedTime})
                 </span>
               </div>
             </CardContent>
@@ -202,9 +202,9 @@ export default async function NicknameDetailPage({ params }: PageProps) {
           {/* Subscription Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Notifications</CardTitle>
+              <CardTitle>알림</CardTitle>
               <CardDescription>
-                Subscribe to receive push notifications when this device changes status
+                이 디바이스의 상태 변경 시 푸시 알림을 받으려면 구독하세요
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -218,17 +218,17 @@ export default async function NicknameDetailPage({ params }: PageProps) {
           {/* Info Card */}
           <Card className="bg-primary/5 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-base">How Notifications Work</CardTitle>
+              <CardTitle className="text-base">알림 작동 방식</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
               <p>
-                • You&apos;ll receive a push notification when the device transitions from connected to disconnected
+                • 디바이스가 연결됨에서 연결 끊김으로 전환되면 푸시 알림을 받습니다
               </p>
               <p>
-                • Notifications work even when this page is closed or your browser is not running
+                • 이 페이지가 닫혀 있거나 브라우저가 실행되지 않아도 알림이 작동합니다
               </p>
               <p>
-                • You can manage your subscription anytime using the button above
+                • 위의 버튼을 사용하여 언제든지 구독을 관리할 수 있습니다
               </p>
             </CardContent>
           </Card>

@@ -1,7 +1,7 @@
 {
-  "name": "Mapleting Monitor",
+  "name": "Mapleting 모니터",
   "short_name": "Mapleting",
-  "description": "Device monitoring and notification system",
+  "description": "디바이스 모니터링 및 알림 시스템",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

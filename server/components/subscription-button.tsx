@@ -34,13 +34,13 @@ export function SubscriptionButton({
 
   const handleSubscribe = async () => {
     if (!pushSupported) {
-      toast.error('Push notifications are not supported in this browser');
+      toast.error('이 브라우저는 푸시 알림을 지원하지 않습니다');
       return;
     }
 
     if (permission === 'denied') {
       toast.error(
-        'Notification permission denied. Please enable notifications in your browser settings.'
+        '알림 권한이 거부되었습니다. 브라우저 설정에서 알림을 활성화해 주세요.'
       );
       return;
     }
@@ -50,11 +50,11 @@ export function SubscriptionButton({
       await subscribeToNickname(nickname);
       setIsSubscribed(true);
       onSubscriptionChange?.(true);
-      toast.success('Successfully subscribed to notifications!');
+      toast.success('알림 구독에 성공했습니다!');
     } catch (error) {
       console.error('Subscribe error:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to subscribe';
+        error instanceof Error ? error.message : '구독에 실패했습니다';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -67,11 +67,11 @@ export function SubscriptionButton({
       await unsubscribeFromNickname(nickname);
       setIsSubscribed(false);
       onSubscriptionChange?.(false);
-      toast.success('Successfully unsubscribed from notifications');
+      toast.success('알림 구독이 취소되었습니다');
     } catch (error) {
       console.error('Unsubscribe error:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to unsubscribe';
+        error instanceof Error ? error.message : '구독 취소에 실패했습니다';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -82,8 +82,8 @@ export function SubscriptionButton({
   if (!pushSupported) {
     return (
       <div className="text-sm text-muted-foreground">
-        Push notifications are not supported in this browser. Please use a modern
-        browser like Chrome, Firefox, or Safari 16.4+.
+        이 브라우저는 푸시 알림을 지원하지 않습니다. Chrome, Firefox 또는
+        Safari 16.4+와 같은 최신 브라우저를 사용해 주세요.
       </div>
     );
   }
@@ -96,7 +96,7 @@ export function SubscriptionButton({
         disabled={isLoading}
         className="w-full"
       >
-        {isLoading ? 'Requesting Permission...' : 'Enable Notifications'}
+        {isLoading ? '권한 요청 중...' : '알림 활성화'}
       </Button>
     );
   }
@@ -105,7 +105,7 @@ export function SubscriptionButton({
   if (permission === 'denied') {
     return (
       <div className="text-sm text-destructive">
-        Notifications are blocked. Please enable them in your browser settings.
+        알림이 차단되어 있습니다. 브라우저 설정에서 활성화해 주세요.
       </div>
     );
   }
@@ -119,10 +119,10 @@ export function SubscriptionButton({
       className="w-full"
     >
       {isLoading
-        ? 'Processing...'
+        ? '처리 중...'
         : isSubscribed
-        ? 'Unsubscribe from Notifications'
-        : 'Subscribe to Notifications'}
+        ? '알림 구독 취소'
+        : '알림 구독'}
     </Button>
   );
 }

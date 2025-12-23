@@ -105,9 +105,9 @@ export function PWAInstallButton() {
           <div className="flex items-start gap-3">
             <Download className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
             <div className="flex-1 space-y-2">
-              <p className="text-sm font-medium">Install as App</p>
+              <p className="text-sm font-medium">앱으로 설치</p>
               <p className="text-xs text-muted-foreground">
-                To install on iOS, tap the Share button and then &quot;Add to Home Screen&quot;.
+                iOS에 설치하려면 공유 버튼을 탭한 후 &quot;홈 화면에 추가&quot;를 선택하세요.
               </p>
             </div>
           </div>
@@ -123,9 +123,9 @@ export function PWAInstallButton() {
         <div className="flex items-start gap-3">
           <Download className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
           <div className="flex-1 space-y-2">
-            <p className="text-sm font-medium">Install as App</p>
+            <p className="text-sm font-medium">앱으로 설치</p>
             <p className="text-xs text-muted-foreground">
-              Install this app on your device for the best experience with offline support.
+              오프라인 지원과 함께 최상의 경험을 위해 이 앱을 설치하세요.
             </p>
             <div className="flex gap-2">
               <Button 
@@ -133,7 +133,7 @@ export function PWAInstallButton() {
                 onClick={handleInstallClick}
                 className="h-8 text-xs"
               >
-                Install
+                설치
               </Button>
               <Button 
                 size="sm" 
@@ -221,7 +221,7 @@ export function PWAInstallButtonCompact() {
       className="gap-2"
     >
       <Download className="h-4 w-4" />
-      Install App
+      앱 설치
     </Button>
   );
 }
