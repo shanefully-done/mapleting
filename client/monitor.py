@@ -195,7 +195,7 @@ def main():
             time.sleep(interval)
     except KeyboardInterrupt:
         print("\n\n✓ Monitoring stopped by user")
-        sys.exit(0)
+        return
 
 if __name__ == "__main__":
     main()
