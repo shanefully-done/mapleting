@@ -4,7 +4,7 @@
 
 **A cross-platform monitoring and notification system for Android applications**
 
-[Features](#-key-features) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Documentation](#-documentation)
+[Features](#-key-features) • [Quick Start](#-quick-start)
 
 </div>
 
