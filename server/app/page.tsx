@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { encodeNicknameForUrl } from "@/lib/url-utils";
-import { Bell, Smartphone, Shield, Globe } from "lucide-react";
+import { Bell, Smartphone } from "lucide-react";
 import { PWAInstallButton } from "@/components/pwa-install-button";
 
 export default function Home() {
