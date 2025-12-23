@@ -1,6 +1,6 @@
-# Mapleting API Documentation
+# MapleTing API Documentation
 
-Complete API reference for the Mapleting monitoring system. All endpoints use JSON for request and response bodies.
+Complete API reference for the MapleTing monitoring system. All endpoints use JSON for request and response bodies.
 
 ## Base URL
 
@@ -21,6 +21,7 @@ Authorization: Bearer <nickname-secret>
 ```
 
 **Example**:
+
 ```http
 POST /api/heartbeat
 Authorization: Bearer 7Kx9vP2mQ8wL5nR3jT6yH1sF4dG7cV0bN
@@ -28,6 +29,7 @@ Content-Type: application/json
 ```
 
 **Security Notes**:
+
 - Secrets are compared using constant-time comparison to prevent timing attacks
 - Each nickname has a unique secret
 - Secrets are never logged or exposed in error messages
@@ -36,19 +38,20 @@ Content-Type: application/json
 ### No Authentication Required
 
 The `/api/subscribe` and `/api/unsubscribe` endpoints do not require authentication:
+
 - Anyone can subscribe to any nickname (public monitoring model)
 - Future versions may add optional user authentication
 
 ## Common Response Codes
 
-| Code | Description |
-|------|-------------|
-| `200 OK` | Request successful |
-| `400 Bad Request` | Invalid request body or parameters |
-| `401 Unauthorized` | Missing or invalid authentication |
-| `404 Not Found` | Resource not found |
-| `405 Method Not Allowed` | HTTP method not supported |
-| `500 Internal Server Error` | Server-side error |
+| Code                        | Description                        |
+| --------------------------- | ---------------------------------- |
+| `200 OK`                    | Request successful                 |
+| `400 Bad Request`           | Invalid request body or parameters |
+| `401 Unauthorized`          | Missing or invalid authentication  |
+| `404 Not Found`             | Resource not found                 |
+| `405 Method Not Allowed`    | HTTP method not supported          |
+| `500 Internal Server Error` | Server-side error                  |
 
 ## Common Response Format
 
@@ -83,69 +86,76 @@ Receives status updates from Python client agents and triggers push notification
 #### Request
 
 **Headers**:
+
 ```http
 Content-Type: application/json
 Authorization: Bearer <nickname-secret>
 ```
 
 **Body**:
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "테스트-장치-01",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
 **Fields**:
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `nickname` | string | ✅ Yes | UTF-8 encoded nickname (treated as opaque text) |
-| `status` | string | ✅ Yes | Either `"connected"` or `"disconnected"` |
-| `timestamp` | number | ✅ Yes | Unix timestamp in milliseconds (must be positive) |
+| Field       | Type   | Required | Description                                       |
+| ----------- | ------ | -------- | ------------------------------------------------- |
+| `nickname`  | string | ✅ Yes   | UTF-8 encoded nickname (treated as opaque text)   |
+| `status`    | string | ✅ Yes   | Either `"connected"` or `"disconnected"`          |
+| `timestamp` | number | ✅ Yes   | Unix timestamp in milliseconds (must be positive) |
 
 #### Response
 
 **Success (200 OK)**:
+
 ```json
 {
-  "success": true,
-  "message": "Heartbeat received",
-  "data": {
-    "nickname": "테스트-장치-01",
-    "status": "disconnected",
-    "timestamp": 1734850000000,
-    "previousStatus": "connected"
-  }
+	"success": true,
+	"message": "Heartbeat received",
+	"data": {
+		"nickname": "테스트-장치-01",
+		"status": "disconnected",
+		"timestamp": 1734850000000,
+		"previousStatus": "connected"
+	}
 }
 ```
 
 **Error - Missing Authorization (401 Unauthorized)**:
+
 ```json
 {
-  "error": "Unauthorized: Missing or invalid Authorization header"
+	"error": "Unauthorized: Missing or invalid Authorization header"
 }
 ```
 
 **Error - Invalid Secret (401 Unauthorized)**:
+
 ```json
 {
-  "error": "Unauthorized: Invalid nickname or secret"
+	"error": "Unauthorized: Invalid nickname or secret"
 }
 ```
 
 **Error - Nickname Not Found (404 Not Found)**:
+
 ```json
 {
-  "error": "Not Found: Nickname does not exist"
+	"error": "Not Found: Nickname does not exist"
 }
 ```
 
 **Error - Invalid Request Body (400 Bad Request)**:
+
 ```json
 {
-  "error": "Bad Request: Missing or invalid 'nickname' field"
+	"error": "Bad Request: Missing or invalid 'nickname' field"
 }
 ```
 
@@ -159,11 +169,13 @@ Authorization: Bearer <nickname-secret>
 6. **Auto-Cleanup**: Deletes expired push endpoints automatically
 
 **State Transition Logic**:
+
 - Only triggers notifications for `connected → disconnected` transitions
 - `disconnected → connected` transitions are logged but don't trigger notifications
 - Duplicate heartbeats update the timestamp but don't trigger notifications
 
 **Rate Limiting**:
+
 - Per-nickname rate limiting: 1 request per second
 - Uses in-memory token bucket implementation
 - Returns `429 Too Many Requests` if limit exceeded
@@ -171,6 +183,7 @@ Authorization: Bearer <nickname-secret>
 #### Example Requests
 
 **cURL**:
+
 ```bash
 curl -X POST https://your-server.com/api/heartbeat \
   -H "Content-Type: application/json" \
@@ -183,18 +196,19 @@ curl -X POST https://your-server.com/api/heartbeat \
 ```
 
 **JavaScript (fetch)**:
+
 ```javascript
-const response = await fetch('https://your-server.com/api/heartbeat', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer 7Kx9vP2mQ8wL5nR3jT6yH1sF4dG7cV0bN'
-  },
-  body: JSON.stringify({
-    nickname: '테스트-장치-01',
-    status: 'disconnected',
-    timestamp: Date.now()
-  })
+const response = await fetch("https://your-server.com/api/heartbeat", {
+	method: "POST",
+	headers: {
+		"Content-Type": "application/json",
+		Authorization: "Bearer 7Kx9vP2mQ8wL5nR3jT6yH1sF4dG7cV0bN",
+	},
+	body: JSON.stringify({
+		nickname: "테스트-장치-01",
+		status: "disconnected",
+		timestamp: Date.now(),
+	}),
 });
 
 const data = await response.json();
@@ -202,6 +216,7 @@ console.log(data);
 ```
 
 **Python (requests)**:
+
 ```python
 import requests
 import time
@@ -233,68 +248,74 @@ Allows users to subscribe to push notifications for a specific nickname.
 #### Request
 
 **Headers**:
+
 ```http
 Content-Type: application/json
 ```
 
 **Body**:
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "subscription": {
-    "endpoint": "https://fcm.googleapis.com/fcm/send/...",
-    "keys": {
-      "p256dh": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "auth": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    }
-  }
+	"nickname": "테스트-장치-01",
+	"subscription": {
+		"endpoint": "https://fcm.googleapis.com/fcm/send/...",
+		"keys": {
+			"p256dh": "Bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+			"auth": "Axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+		}
+	}
 }
 ```
 
 **Fields**:
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `nickname` | string | ✅ Yes | UTF-8 encoded nickname to subscribe to |
-| `subscription` | object | ✅ Yes | Push subscription object |
-| `subscription.endpoint` | string | ✅ Yes | Push service endpoint URL |
-| `subscription.keys` | object | ✅ Yes | Push encryption keys |
-| `subscription.keys.p256dh` | string | ✅ Yes | ECDH P-256 public key (base64url encoded) |
-| `subscription.keys.auth` | string | ✅ Yes | Authentication secret (base64url encoded) |
+| Field                      | Type   | Required | Description                               |
+| -------------------------- | ------ | -------- | ----------------------------------------- |
+| `nickname`                 | string | ✅ Yes   | UTF-8 encoded nickname to subscribe to    |
+| `subscription`             | object | ✅ Yes   | Push subscription object                  |
+| `subscription.endpoint`    | string | ✅ Yes   | Push service endpoint URL                 |
+| `subscription.keys`        | object | ✅ Yes   | Push encryption keys                      |
+| `subscription.keys.p256dh` | string | ✅ Yes   | ECDH P-256 public key (base64url encoded) |
+| `subscription.keys.auth`   | string | ✅ Yes   | Authentication secret (base64url encoded) |
 
 #### Response
 
 **Success - New Subscription (200 OK)**:
+
 ```json
 {
-  "success": true,
-  "subscriptionId": "550e8400-e29b-41d4-a716-446655440000",
-  "nickname": "테스트-장치-01",
-  "updated": false
+	"success": true,
+	"subscriptionId": "550e8400-e29b-41d4-a716-446655440000",
+	"nickname": "테스트-장치-01",
+	"updated": false
 }
 ```
 
 **Success - Updated Existing Subscription (200 OK)**:
+
 ```json
 {
-  "success": true,
-  "subscriptionId": "550e8400-e29b-41d4-a716-446655440000",
-  "nickname": "테스트-장치-01",
-  "updated": true
+	"success": true,
+	"subscriptionId": "550e8400-e29b-41d4-a716-446655440000",
+	"nickname": "테스트-장치-01",
+	"updated": true
 }
 ```
 
 **Error - Nickname Not Found (404 Not Found)**:
+
 ```json
 {
-  "error": "Not Found: Nickname does not exist"
+	"error": "Not Found: Nickname does not exist"
 }
 ```
 
 **Error - Invalid Subscription (400 Bad Request)**:
+
 ```json
 {
-  "error": "Bad Request: Invalid subscription format"
+	"error": "Bad Request: Invalid subscription format"
 }
 ```
 
@@ -307,6 +328,7 @@ Content-Type: application/json
 5. **User Agent**: Stores browser user agent for debugging
 
 **Duplicate Handling**:
+
 - If the endpoint already exists, the subscription is updated instead of creating a duplicate
 - This handles cases where keys change but the endpoint stays the same
 - Returns `updated: true` to indicate an existing subscription was modified
@@ -314,6 +336,7 @@ Content-Type: application/json
 #### Example Requests
 
 **cURL**:
+
 ```bash
 curl -X POST https://your-server.com/api/subscribe \
   -H "Content-Type: application/json" \
@@ -330,23 +353,24 @@ curl -X POST https://your-server.com/api/subscribe \
 ```
 
 **JavaScript (Browser - after push subscription)**:
+
 ```javascript
 // Assuming you have a push subscription from navigator.pushManager.subscribe()
-const response = await fetch('https://your-server.com/api/subscribe', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    nickname: '테스트-장치-01',
-    subscription: {
-      endpoint: pushSubscription.endpoint,
-      keys: {
-        p256dh: pushSubscription.getKey('p256dh'),
-        auth: pushSubscription.getKey('auth')
-      }
-    }
-  })
+const response = await fetch("https://your-server.com/api/subscribe", {
+	method: "POST",
+	headers: {
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		nickname: "테스트-장치-01",
+		subscription: {
+			endpoint: pushSubscription.endpoint,
+			keys: {
+				p256dh: pushSubscription.getKey("p256dh"),
+				auth: pushSubscription.getKey("auth"),
+			},
+		},
+	}),
 });
 
 const data = await response.json();
@@ -361,32 +385,30 @@ Before calling `/api/subscribe`, you need a push subscription from the browser:
 // Request push notification permission
 const permission = await Notification.requestPermission();
 
-if (permission === 'granted') {
-  // Subscribe to push service
-  const pushSubscription = await navigator.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-  });
-  
-  // Now send to /api/subscribe
-  await subscribeToNickname('테스트-장치-01', pushSubscription);
+if (permission === "granted") {
+	// Subscribe to push service
+	const pushSubscription = await navigator.pushManager.subscribe({
+		userVisibleOnly: true,
+		applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+	});
+
+	// Now send to /api/subscribe
+	await subscribeToNickname("테스트-장치-01", pushSubscription);
 }
 
 // Utility function to convert VAPID key
 function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
-  
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  
-  return outputArray;
+	const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
+
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+
+	return outputArray;
 }
 ```
 
@@ -401,44 +423,49 @@ Allows users to cancel push notifications for a specific subscription.
 #### Request
 
 **Headers**:
+
 ```http
 Content-Type: application/json
 ```
 
 **Body**:
+
 ```json
 {
-  "subscriptionId": "550e8400-e29b-41d4-a716-446655440000"
+	"subscriptionId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
 **Fields**:
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `subscriptionId` | string | ✅ Yes | UUID of the subscription to cancel |
+| Field            | Type   | Required | Description                        |
+| ---------------- | ------ | -------- | ---------------------------------- |
+| `subscriptionId` | string | ✅ Yes   | UUID of the subscription to cancel |
 
 #### Response
 
 **Success (200 OK)**:
+
 ```json
 {
-  "success": true,
-  "message": "Subscription removed successfully"
+	"success": true,
+	"message": "Subscription removed successfully"
 }
 ```
 
 **Error - Invalid UUID (400 Bad Request)**:
+
 ```json
 {
-  "error": "Bad Request: Invalid 'subscriptionId' format (must be valid UUID)"
+	"error": "Bad Request: Invalid 'subscriptionId' format (must be valid UUID)"
 }
 ```
 
 **Error - Subscription Not Found (404 Not Found)**:
+
 ```json
 {
-  "error": "Not Found: Subscription does not exist"
+	"error": "Not Found: Subscription does not exist"
 }
 ```
 
@@ -459,6 +486,7 @@ await pushSubscription.unsubscribe();
 #### Example Requests
 
 **cURL**:
+
 ```bash
 curl -X POST https://your-server.com/api/unsubscribe \
   -H "Content-Type: application/json" \
@@ -468,15 +496,16 @@ curl -X POST https://your-server.com/api/unsubscribe \
 ```
 
 **JavaScript**:
+
 ```javascript
-const response = await fetch('https://your-server.com/api/unsubscribe', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    subscriptionId: '550e8400-e29b-41d4-a716-446655440000'
-  })
+const response = await fetch("https://your-server.com/api/unsubscribe", {
+	method: "POST",
+	headers: {
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		subscriptionId: "550e8400-e29b-41d4-a716-446655440000",
+	}),
 });
 
 const data = await response.json();
@@ -484,6 +513,7 @@ console.log(data);
 ```
 
 **Python**:
+
 ```python
 import requests
 
@@ -508,9 +538,9 @@ print(response.json())
 
 ```typescript
 interface HeartbeatRequest {
-  nickname: string;      // UTF-8 encoded nickname
-  status: "connected" | "disconnected";
-  timestamp: number;     // Unix timestamp in milliseconds
+	nickname: string; // UTF-8 encoded nickname
+	status: "connected" | "disconnected";
+	timestamp: number; // Unix timestamp in milliseconds
 }
 ```
 
@@ -518,14 +548,14 @@ interface HeartbeatRequest {
 
 ```typescript
 interface SubscribeRequest {
-  nickname: string;
-  subscription: {
-    endpoint: string;
-    keys: {
-      p256dh: string;    // ECDH P-256 public key (base64url)
-      auth: string;      // Authentication secret (base64url)
-    };
-  };
+	nickname: string;
+	subscription: {
+		endpoint: string;
+		keys: {
+			p256dh: string; // ECDH P-256 public key (base64url)
+			auth: string; // Authentication secret (base64url)
+		};
+	};
 }
 ```
 
@@ -533,7 +563,7 @@ interface SubscribeRequest {
 
 ```typescript
 interface UnsubscribeRequest {
-  subscriptionId: string;  // UUID v4
+	subscriptionId: string; // UUID v4
 }
 ```
 
@@ -541,14 +571,14 @@ interface UnsubscribeRequest {
 
 ```typescript
 interface HeartbeatResponse {
-  success: true;
-  message: "Heartbeat received";
-  data: {
-    nickname: string;
-    status: "connected" | "disconnected";
-    timestamp: number;
-    previousStatus: "connected" | "disconnected";
-  };
+	success: true;
+	message: "Heartbeat received";
+	data: {
+		nickname: string;
+		status: "connected" | "disconnected";
+		timestamp: number;
+		previousStatus: "connected" | "disconnected";
+	};
 }
 ```
 
@@ -556,10 +586,10 @@ interface HeartbeatResponse {
 
 ```typescript
 interface SubscribeResponse {
-  success: true;
-  subscriptionId: string;
-  nickname: string;
-  updated: boolean;       // true if existing subscription was updated
+	success: true;
+	subscriptionId: string;
+	nickname: string;
+	updated: boolean; // true if existing subscription was updated
 }
 ```
 
@@ -567,8 +597,8 @@ interface SubscribeResponse {
 
 ```typescript
 interface UnsubscribeResponse {
-  success: true;
-  message: "Subscription removed successfully";
+	success: true;
+	message: "Subscription removed successfully";
 }
 ```
 
@@ -582,29 +612,29 @@ All error responses follow this structure:
 
 ```typescript
 interface ErrorResponse {
-  error: string;          // Human-readable error message
-  details?: any;          // Optional additional details
+	error: string; // Human-readable error message
+	details?: any; // Optional additional details
 }
 ```
 
 ### Common Errors
 
-| HTTP Code | Error Message | Cause | Solution |
-|-----------|---------------|-------|----------|
-| `400` | `Bad Request: Invalid JSON body` | Malformed JSON | Check JSON syntax |
-| `400` | `Bad Request: Missing or invalid 'nickname' field` | Missing nickname | Include nickname in request |
-| `400` | `Bad Request: 'status' must be 'connected' or 'disconnected'` | Invalid status value | Use only "connected" or "disconnected" |
-| `400` | `Bad Request: Missing or invalid 'timestamp' field` | Invalid timestamp | Use positive number (milliseconds) |
-| `400` | `Bad Request: Invalid subscription format` | Invalid push subscription | Check subscription structure |
-| `400` | `Bad Request: Invalid 'subscriptionId' format` | Invalid UUID | Use valid UUID v4 format |
-| `401` | `Unauthorized: Missing or invalid Authorization header` | No auth header or invalid secret | Include `Authorization: Bearer <secret>` header |
-| `401` | `Unauthorized: Invalid nickname or secret` | Secret doesn't match | Verify secret is correct for nickname |
-| `404` | `Not Found: Nickname does not exist` | Nickname not in database | Register nickname first |
-| `404` | `Not Found: Subscription does not exist` | Subscription ID not found | Verify subscription ID |
-| `405` | `Method Not Allowed: Only POST requests are accepted` | Wrong HTTP method | Use POST method |
-| `429` | `Too Many Requests: Rate limit exceeded` | Too many requests | Wait before retrying |
-| `500` | `Internal Server Error: Failed to update status` | Database error | Check server logs |
-| `500` | `Internal Server Error: Failed to create subscription` | Database error | Check server logs |
+| HTTP Code | Error Message                                                 | Cause                            | Solution                                        |
+| --------- | ------------------------------------------------------------- | -------------------------------- | ----------------------------------------------- |
+| `400`     | `Bad Request: Invalid JSON body`                              | Malformed JSON                   | Check JSON syntax                               |
+| `400`     | `Bad Request: Missing or invalid 'nickname' field`            | Missing nickname                 | Include nickname in request                     |
+| `400`     | `Bad Request: 'status' must be 'connected' or 'disconnected'` | Invalid status value             | Use only "connected" or "disconnected"          |
+| `400`     | `Bad Request: Missing or invalid 'timestamp' field`           | Invalid timestamp                | Use positive number (milliseconds)              |
+| `400`     | `Bad Request: Invalid subscription format`                    | Invalid push subscription        | Check subscription structure                    |
+| `400`     | `Bad Request: Invalid 'subscriptionId' format`                | Invalid UUID                     | Use valid UUID v4 format                        |
+| `401`     | `Unauthorized: Missing or invalid Authorization header`       | No auth header or invalid secret | Include `Authorization: Bearer <secret>` header |
+| `401`     | `Unauthorized: Invalid nickname or secret`                    | Secret doesn't match             | Verify secret is correct for nickname           |
+| `404`     | `Not Found: Nickname does not exist`                          | Nickname not in database         | Register nickname first                         |
+| `404`     | `Not Found: Subscription does not exist`                      | Subscription ID not found        | Verify subscription ID                          |
+| `405`     | `Method Not Allowed: Only POST requests are accepted`         | Wrong HTTP method                | Use POST method                                 |
+| `429`     | `Too Many Requests: Rate limit exceeded`                      | Too many requests                | Wait before retrying                            |
+| `500`     | `Internal Server Error: Failed to update status`              | Database error                   | Check server logs                               |
+| `500`     | `Internal Server Error: Failed to create subscription`        | Database error                   | Check server logs                               |
 
 ---
 
@@ -615,23 +645,27 @@ interface ErrorResponse {
 The `/api/heartbeat` endpoint implements per-nickname rate limiting:
 
 **Limits**:
+
 - **Requests**: 1 request per second per nickname
 - **Window**: Sliding window (1 second)
 
 **Response**:
+
 ```json
 {
-  "error": "Too Many Requests: Rate limit exceeded",
-  "retryAfter": 1000  // milliseconds to wait
+	"error": "Too Many Requests: Rate limit exceeded",
+	"retryAfter": 1000 // milliseconds to wait
 }
 ```
 
 **Implementation**:
+
 - In-memory token bucket
 - Independent per nickname (not per IP)
 - Resets after 1 second of inactivity
 
 **Best Practices**:
+
 - Respect rate limits in client code
 - Implement exponential backoff on 429 responses
 - Don't spam heartbeat endpoint
@@ -645,6 +679,7 @@ The `/api/heartbeat` endpoint implements per-nickname rate limiting:
 All text fields in the API support UTF-8 encoding:
 
 1. **Nickname Field**:
+
    - Treat as opaque UTF-8 text
    - Do NOT assume ASCII encoding
    - Do NOT URL-decode the nickname field
@@ -652,6 +687,7 @@ All text fields in the API support UTF-8 encoding:
    - No Unicode normalization (use exact string matching)
 
 2. **Request Headers**:
+
    - Always include `Content-Type: application/json; charset=utf-8`
    - Ensure proper UTF-8 encoding in HTTP body
 
@@ -662,38 +698,42 @@ All text fields in the API support UTF-8 encoding:
 ### Example: Non-English Nicknames
 
 **Korean**:
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "테스트-장치-01",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
 **Japanese**:
+
 ```json
 {
-  "nickname": "テスト-デバイス-01",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "テスト-デバイス-01",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
 **Chinese**:
+
 ```json
 {
-  "nickname": "测试设备-01",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "测试设备-01",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
 **Mixed Scripts**:
+
 ```json
 {
-  "nickname": "Device-测试-테스트-デバイス",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "Device-测试-테스트-デバイス",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
@@ -707,14 +747,14 @@ When a state transition occurs (connected → disconnected), the server sends pu
 
 ```json
 {
-  "title": "Device disconnected",
-  "body": "테스트-장치-01 is offline",
-  "nickname": "테스트-장치-01",
-  "status": "disconnected",
-  "timestamp": 1734850000000,
-  "data": {
-    "nicknameEncoded": "7YyA65OU7J2YIO2EpOyglA=="
-  }
+	"title": "Device disconnected",
+	"body": "테스트-장치-01 is offline",
+	"nickname": "테스트-장치-01",
+	"status": "disconnected",
+	"timestamp": 1734850000000,
+	"data": {
+		"nicknameEncoded": "7YyA65OU7J2YIO2EpOyglA=="
+	}
 }
 ```
 
@@ -723,39 +763,35 @@ When a state transition occurs (connected → disconnected), the server sends pu
 Your service worker should handle push events:
 
 ```javascript
-self.addEventListener('push', (event) => {
-  const payload = event.data.json();
-  
-  const options = {
-    body: payload.body,
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    vibrate: [200, 100, 200],
-    data: {
-      nicknameEncoded: payload.data.nicknameEncoded
-    },
-    actions: [
-      {
-        action: 'view',
-        title: 'View Details'
-      }
-    ]
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification(payload.title, options)
-  );
+self.addEventListener("push", (event) => {
+	const payload = event.data.json();
+
+	const options = {
+		body: payload.body,
+		icon: "/icons/icon-192x192.png",
+		badge: "/icons/badge-72x72.png",
+		vibrate: [200, 100, 200],
+		data: {
+			nicknameEncoded: payload.data.nicknameEncoded,
+		},
+		actions: [
+			{
+				action: "view",
+				title: "View Details",
+			},
+		],
+	};
+
+	event.waitUntil(self.registration.showNotification(payload.title, options));
 });
 
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  
-  const encodedNickname = event.notification.data.nicknameEncoded;
-  const url = `/n/${encodedNickname}`;
-  
-  event.waitUntil(
-    clients.openWindow(url)
-  );
+self.addEventListener("notificationclick", (event) => {
+	event.notification.close();
+
+	const encodedNickname = event.notification.data.nicknameEncoded;
+	const url = `/n/${encodedNickname}`;
+
+	event.waitUntil(clients.openWindow(url));
 });
 ```
 
@@ -766,12 +802,14 @@ self.addEventListener('notificationclick', (event) => {
 ### Local Testing
 
 **Start development server**:
+
 ```bash
 cd server
 bun dev
 ```
 
 **Test heartbeat endpoint**:
+
 ```bash
 curl -X POST http://localhost:3000/api/heartbeat \
   -H "Content-Type: application/json" \
@@ -784,6 +822,7 @@ curl -X POST http://localhost:3000/api/heartbeat \
 ```
 
 **Test subscribe endpoint**:
+
 ```bash
 curl -X POST http://localhost:3000/api/subscribe \
   -H "Content-Type: application/json" \
@@ -801,9 +840,10 @@ curl -X POST http://localhost:3000/api/subscribe \
 
 ### Using Postman
 
-**Create a new collection** for Mapleting API:
+**Create a new collection** for MapleTing API:
 
 1. **Heartbeat Request**:
+
    - Method: POST
    - URL: `{{baseUrl}}/api/heartbeat`
    - Headers:
@@ -812,6 +852,7 @@ curl -X POST http://localhost:3000/api/subscribe \
    - Body: Raw JSON
 
 2. **Subscribe Request**:
+
    - Method: POST
    - URL: `{{baseUrl}}/api/subscribe`
    - Headers:

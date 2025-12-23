@@ -1,4 +1,4 @@
-# Mapleting
+# MapleTing
 
 A cross-platform monitoring and notification system that enables real-time alerts for Android application state changes. Replace Telegram notifications with modern web push notifications that work on Android, iOS 16.4+, Windows, macOS, and Linux.
 
@@ -7,6 +7,7 @@ A cross-platform monitoring and notification system that enables real-time alert
 ### For Server Administrators
 
 1. **Deploy the Next.js Server**:
+
    ```bash
    cd server
    bun install
@@ -16,6 +17,7 @@ A cross-platform monitoring and notification system that enables real-time alert
    ```
 
 2. **Set Up Database**:
+
    - Create a project at [supabase.com](https://supabase.com/)
    - Run the SQL schema from [`server/lib/schema.sql`](server/lib/schema.sql:1)
    - Configure environment variables
@@ -31,6 +33,7 @@ A cross-platform monitoring and notification system that enables real-time alert
 ### For Python Client Users
 
 1. **Clone and Configure**:
+
    ```bash
    cd client
    cp config.json.example config.json
@@ -39,6 +42,7 @@ A cross-platform monitoring and notification system that enables real-time alert
    ```
 
 2. **Install ADB**:
+
    - Download from [developer.android.com](https://developer.android.com/tools/releases/platform-tools)
    - Enable USB debugging on your Android device
    - Verify connection: `adb devices`
@@ -52,7 +56,7 @@ A cross-platform monitoring and notification system that enables real-time alert
 
 ## 📋 Overview
 
-Mapleting is a complete monitoring system consisting of:
+MapleTing is a complete monitoring system consisting of:
 
 - **Python Client Agent**: Monitors Android apps via ADB and sends heartbeats
 - **Next.js PWA Server**: Receives heartbeats and manages push notifications
@@ -67,7 +71,7 @@ Mapleting is a complete monitoring system consisting of:
 ✅ **Self-Hosted** - No external messaging service dependencies  
 ✅ **Lightweight Client** - Uses only Python standard library  
 ✅ **Type-Safe Server** - Full TypeScript implementation  
-✅ **Supabase Integration** - Managed PostgreSQL with excellent DX  
+✅ **Supabase Integration** - Managed PostgreSQL with excellent DX
 
 ## 🏗️ Architecture
 
@@ -160,13 +164,13 @@ Mapleting is a complete monitoring system consisting of:
 
 ## 📱 Platform Support
 
-| Platform | Works | Notes |
-|----------|-------|-------|
-| Android | ✅ Yes | Chrome, Firefox |
-| iOS | ✅ Yes | iOS 16.4+ (Safari) |
-| Windows | ✅ Yes | Chrome, Firefox, Edge |
-| macOS | ✅ Yes | Chrome, Firefox, Safari |
-| Linux | ✅ Yes | Chrome, Firefox |
+| Platform | Works  | Notes                   |
+| -------- | ------ | ----------------------- |
+| Android  | ✅ Yes | Chrome, Firefox         |
+| iOS      | ✅ Yes | iOS 16.4+ (Safari)      |
+| Windows  | ✅ Yes | Chrome, Firefox, Edge   |
+| macOS    | ✅ Yes | Chrome, Firefox, Safari |
+| Linux    | ✅ Yes | Chrome, Firefox         |
 
 ### Browser Support
 
@@ -178,6 +182,7 @@ Mapleting is a complete monitoring system consisting of:
 ## 🔧 Technology Stack
 
 ### Client (Python)
+
 - **Language**: Python 3.8+
 - **Monitoring**: ADB (Android Debug Bridge)
 - **Communication**: HTTPS POST to heartbeat API
@@ -185,6 +190,7 @@ Mapleting is a complete monitoring system consisting of:
 - **Packaging**: PyInstaller for standalone executables
 
 ### Server (Next.js)
+
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Database**: Supabase Postgres
@@ -241,13 +247,14 @@ cp config.json.example config.json
 ```
 
 Configuration example:
+
 ```json
 {
-  "server_url": "https://your-server.com",
-  "nickname": "테스트-장치-01",
-  "secret": "your-per-nickname-secret",
-  "package_name": "com.nexon.ma",
-  "check_interval_seconds": 3
+	"server_url": "https://your-server.com",
+	"nickname": "테스트-장치-01",
+	"secret": "your-per-nickname-secret",
+	"package_name": "com.nexon.ma",
+	"check_interval_seconds": 3
 }
 ```
 
@@ -265,7 +272,8 @@ python monitor.py
 
 ### UTF-8 First Design
 
-All text handling in Mapleting assumes UTF-8 encoding:
+All text handling in MapleTing assumes UTF-8 encoding:
+
 - Nicknames can be in any language (Korean, Japanese, Chinese, etc.)
 - Database stores UTF-8 text natively
 - API payloads are UTF-8 encoded JSON
@@ -274,6 +282,7 @@ All text handling in Mapleting assumes UTF-8 encoding:
 ### State Transition Detection
 
 The Python client monitors app state transitions:
+
 - **Running → Stopped**: Triggers push notification to all subscribers
 - **Stopped → Running**: Logged to console (no notification)
 - **Continuous Monitoring**: Checks every N seconds (configurable)

@@ -1,7 +1,7 @@
 {
-  "name": "Mapleting 모니터",
-  "short_name": "Mapleting",
-  "description": "디바이스 모니터링 및 알림 시스템",
+  "name": "메이플팅",
+  "short_name": "메이플팅",
+  "description": "에뮬레이터 메이플 키우기 팅기면 알랴드림",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -57,6 +57,9 @@
       "purpose": "any"
     }
   ],
-  "categories": ["productivity", "utilities"],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
   "screenshots": []
 }

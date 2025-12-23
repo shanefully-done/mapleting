@@ -1,6 +1,6 @@
-# Mapleting PWA Server
+# MapleTing PWA Server
 
-Next.js-based PWA server for the Mapleting monitoring and notification system. Receives heartbeats from Python client agents and delivers cross-platform push notifications to subscribers.
+Next.js-based PWA server for the MapleTing monitoring and notification system. Receives heartbeats from Python client agents and delivers cross-platform push notifications to subscribers.
 
 ## Features
 
@@ -72,6 +72,7 @@ YOUR_PRIVATE_KEY_HERE
 5. Click **Run** to execute
 
 This will create:
+
 - `nicknames` table (monitored devices/applications)
 - `push_subscriptions` table (user notification subscriptions)
 - Required indexes for performance
@@ -112,6 +113,7 @@ NODE_ENV="development"
 ```
 
 **Important**:
+
 - Never commit `.env.local` to version control
 - Keep `VAPID_PRIVATE_KEY` and `SUPABASE_SERVICE_ROLE_KEY` secure
 - The `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS - use with caution
@@ -181,11 +183,13 @@ bun run type-check
 To test PWA functionality:
 
 1. **Install the PWA**:
+
    - Open [http://localhost:3000](http://localhost:3000) in Chrome/Edge
    - Look for the install icon in the address bar
    - Click "Install" to add to your home screen
 
 2. **Test Push Notifications**:
+
    - Subscribe to a nickname on the home page
    - Use the Python client to send a heartbeat
    - Verify notification appears
@@ -206,11 +210,12 @@ Receives status updates from Python client agents.
 **Authentication**: `Authorization: Bearer <nickname-secret>`
 
 **Request Body**:
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "status": "connected",
-  "timestamp": 1734850000000
+	"nickname": "테스트-장치-01",
+	"status": "connected",
+	"timestamp": 1734850000000
 }
 ```
 
@@ -221,16 +226,17 @@ Receives status updates from Python client agents.
 Subscribe to notifications for a nickname.
 
 **Request Body**:
+
 ```json
 {
-  "nickname": "テスト-장치-01",
-  "subscription": {
-    "endpoint": "https://fcm.googleapis.com/...",
-    "keys": {
-      "p256dh": "B...",
-      "auth": "A..."
-    }
-  }
+	"nickname": "テスト-장치-01",
+	"subscription": {
+		"endpoint": "https://fcm.googleapis.com/...",
+		"keys": {
+			"p256dh": "B...",
+			"auth": "A..."
+		}
+	}
 }
 ```
 
@@ -241,9 +247,10 @@ Subscribe to notifications for a nickname.
 Cancel push notification subscription.
 
 **Request Body**:
+
 ```json
 {
-  "subscriptionId": "uuid"
+	"subscriptionId": "uuid"
 }
 ```
 
@@ -256,16 +263,19 @@ For detailed API documentation, see [`API.md`](API.md:1).
 ### Deploy to Vercel
 
 1. **Install Vercel CLI**:
+
    ```bash
    bun install -g vercel
    ```
 
 2. **Deploy**:
+
    ```bash
    vercel
    ```
 
 3. **Configure Environment Variables**:
+
    - Go to your Vercel project dashboard
    - Navigate to **Settings** → **Environment Variables**
    - Add all variables from `.env.local` (except `NODE_ENV`)
@@ -279,11 +289,13 @@ For detailed API documentation, see [`API.md`](API.md:1).
 You can deploy to any Node.js hosting platform:
 
 1. **Build the application**:
+
    ```bash
    bun run build
    ```
 
 2. **Start production server**:
+
    ```bash
    bun start
    ```
@@ -293,7 +305,7 @@ You can deploy to any Node.js hosting platform:
    server {
        listen 443 ssl;
        server_name your-domain.com;
-       
+
        location / {
            proxy_pass http://localhost:3000;
            proxy_http_version 1.1;
@@ -314,6 +326,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: Cannot connect to Supabase
 
 **Solutions**:
+
 - Verify `NEXT_PUBLIC_SUPABASE_URL` is correct
 - Check `NEXT_PUBLIC_SUPABASE_ANON_KEY` matches your Supabase project
 - Ensure your Supabase project is active (not paused)
@@ -324,6 +337,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: Notifications not being delivered
 
 **Solutions**:
+
 - Verify VAPID keys are correctly set in `.env.local`
 - Check browser console for push subscription errors
 - Ensure `NEXT_PUBLIC_VAPID_PUBLIC_KEY` matches your VAPID key pair
@@ -337,6 +351,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: Service worker won't register
 
 **Solutions**:
+
 - Ensure you're accessing via HTTPS or localhost
 - Clear browser cache and service workers:
   - DevTools → Application → Service Workers → Unregister
@@ -348,6 +363,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: Non-English nicknames show garbled text
 
 **Solutions**:
+
 - Ensure database schema uses UTF-8 encoding (Supabase default)
 - Verify nicknames are stored as TEXT (not VARCHAR)
 - Check that URL encoding/decoding is working correctly
@@ -358,6 +374,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: `process.env` variables are undefined
 
 **Solutions**:
+
 - Ensure `.env.local` is in the `server/` directory
 - Restart development server after adding variables
 - Verify variable names match exactly (case-sensitive)
@@ -369,6 +386,7 @@ You can deploy to any Node.js hosting platform:
 **Problem**: TypeScript or build errors
 
 **Solutions**:
+
 - Ensure all dependencies are installed: `bun install`
 - Check Node.js version: `node --version` (should be 18.17+ or 20.x)
 - Clear Next.js cache: `rm -rf .next`
@@ -386,6 +404,7 @@ You can deploy to any Node.js hosting platform:
 ### Rate Limiting
 
 The `/api/heartbeat` endpoint implements per-nickname rate limiting:
+
 - **Limit**: 1 request per second per nickname
 - **Implementation**: In-memory token bucket
 - **Production**: Consider Redis for distributed rate limiting

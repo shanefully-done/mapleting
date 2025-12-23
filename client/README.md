@@ -1,6 +1,6 @@
-# Mapleting Python Client
+# MapleTing Python Client
 
-Python-based monitoring agent for the Mapleting system. Monitors Android applications via ADB and sends heartbeat updates to the Next.js server.
+Python-based monitoring agent for the MapleTing system. Monitors Android applications via ADB and sends heartbeat updates to the Next.js server.
 
 ## Features
 
@@ -18,6 +18,7 @@ Before you begin, ensure you have the following:
 ### Required Software
 
 1. **Python 3.8+**
+
    - Download from [python.org](https://www.python.org/downloads/)
    - Verify installation: `python --version`
 
@@ -29,17 +30,20 @@ Before you begin, ensure you have the following:
 ### Android Device Setup
 
 1. **Enable USB Debugging**:
+
    - Go to **Settings** → **About Phone**
    - Tap **Build Number** 7 times to enable Developer Options
    - Go to **Settings** → **Developer Options**
    - Enable **USB Debugging**
 
 2. **Connect Device**:
+
    - Connect your Android device via USB
    - Accept the debugging prompt on the device
    - Verify connection: `adb devices`
 
    Expected output:
+
    ```
    List of devices attached
    DEVICE_ID    device
@@ -50,11 +54,13 @@ Before you begin, ensure you have the following:
 ### Option 1: Run from Source
 
 1. **Clone or Download** this repository:
+
    ```bash
    cd client
    ```
 
 2. **Verify Python Script**:
+
    ```bash
    python monitor.py --help
    ```
@@ -71,20 +77,24 @@ Before you begin, ensure you have the following:
 For distribution or running without Python installed:
 
 1. **Install PyInstaller**:
+
    ```bash
    pip install pyinstaller
    ```
 
 2. **Build Executable**:
+
    ```bash
    pyinstaller monitor.spec
    ```
 
    This creates a standalone binary in `dist/monitor`:
+
    - **Linux/macOS**: `dist/monitor`
    - **Windows**: `dist/monitor.exe`
 
 3. **Run the Executable**:
+
    ```bash
    # Linux/macOS
    ./dist/monitor
@@ -105,23 +115,23 @@ Edit `config.json` with your settings:
 
 ```json
 {
-  "server_url": "https://your-server.com",
-  "nickname": "테스트-장치-01",
-  "secret": "your-per-nickname-secret",
-  "package_name": "com.example.app",
-  "check_interval_seconds": 3
+	"server_url": "https://your-server.com",
+	"nickname": "테스트-장치-01",
+	"secret": "your-per-nickname-secret",
+	"package_name": "com.example.app",
+	"check_interval_seconds": 3
 }
 ```
 
 ### Configuration Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `server_url` | string | ✅ Yes | URL of the Next.js server (e.g., `https://your-server.com`) |
-| `nickname` | string | ✅ Yes | Display name for this device (UTF-8, any language) |
-| `secret` | string | ✅ Yes | Per-nickname secret for authentication (get from server admin) |
-| `package_name` | string | ✅ Yes | Android package name to monitor (e.g., `com.nexon.ma`) |
-| `check_interval_seconds` | number | ❌ No | How often to check app status (default: 3 seconds) |
+| Field                    | Type   | Required | Description                                                    |
+| ------------------------ | ------ | -------- | -------------------------------------------------------------- |
+| `server_url`             | string | ✅ Yes   | URL of the Next.js server (e.g., `https://your-server.com`)    |
+| `nickname`               | string | ✅ Yes   | Display name for this device (UTF-8, any language)             |
+| `secret`                 | string | ✅ Yes   | Per-nickname secret for authentication (get from server admin) |
+| `package_name`           | string | ✅ Yes   | Android package name to monitor (e.g., `com.nexon.ma`)         |
+| `check_interval_seconds` | number | ❌ No    | How often to check app status (default: 3 seconds)             |
 
 ### Finding Your Package Name
 
@@ -136,6 +146,7 @@ adb shell pm list packages | grep -i keyword
 ```
 
 Common package names:
+
 - **MapleStory M**: `com.nexon.ma`
 - **MapleStory Worlds**: `com.nexon.msw`
 - **YouTube**: `com.google.android.youtube`
@@ -146,11 +157,13 @@ Common package names:
 ### Running the Monitor
 
 **From Source**:
+
 ```bash
 python monitor.py
 ```
 
 **Standalone Executable**:
+
 ```bash
 # Linux/macOS
 ./monitor
@@ -172,6 +185,7 @@ Initial status: RUNNING
 ```
 
 While monitoring:
+
 - No output = app still running (no state change)
 - Status messages appear when app starts or stops
 
@@ -216,21 +230,24 @@ The client sends HTTP POST requests to the server:
 **Endpoint**: `POST /api/heartbeat`
 
 **Headers**:
+
 ```
 Content-Type: application/json
 Authorization: Bearer <your-secret>
 ```
 
 **Body**:
+
 ```json
 {
-  "nickname": "테스트-장치-01",
-  "status": "disconnected",
-  "timestamp": 1734850000000
+	"nickname": "테스트-장치-01",
+	"status": "disconnected",
+	"timestamp": 1734850000000
 }
 ```
 
 **Response**:
+
 - `200 OK`: Heartbeat received successfully
 - `401 Unauthorized`: Invalid secret (check configuration)
 - `404 Not Found`: Nickname not registered on server
@@ -243,6 +260,7 @@ Authorization: Bearer <your-secret>
 **Problem**: `ADB is not installed` error
 
 **Solution**:
+
 1. Download Android Platform Tools: [developer.android.com](https://developer.android.com/tools/releases/platform-tools)
 2. Add to system PATH:
    - **Windows**: Add `C:\path\to\platform-tools` to Environment Variables
@@ -259,6 +277,7 @@ Authorization: Bearer <your-secret>
 **Problem**: `adb devices` shows "unauthorized"
 
 **Solution**:
+
 1. Revoke USB debugging on device:
    - Settings → Developer Options → Revoke USB debugging authorization
 2. Disconnect and reconnect USB cable
@@ -268,6 +287,7 @@ Authorization: Bearer <your-secret>
 **Problem**: `adb devices` shows "offline"
 
 **Solution**:
+
 1. Restart ADB server:
    ```bash
    adb kill-server
@@ -281,6 +301,7 @@ Authorization: Bearer <your-secret>
 **Problem**: `config.json not found` error
 
 **Solution**:
+
 1. Ensure `config.json` exists in the same directory as `monitor.py`
 2. Copy from example: `cp config.json.example config.json`
 3. Verify file is readable: `cat config.json`
@@ -288,6 +309,7 @@ Authorization: Bearer <your-secret>
 **Problem**: `Invalid JSON in config.json` error
 
 **Solution**:
+
 1. Validate JSON syntax: [jsonlint.com](https://jsonlint.com/)
 2. Check for:
    - Missing commas between fields
@@ -300,6 +322,7 @@ Authorization: Bearer <your-secret>
 
 **Solution**:
 Ensure all required fields are present in `config.json`:
+
 - `server_url`
 - `nickname`
 - `secret`
@@ -310,6 +333,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: Failed to connect to server
 
 **Solutions**:
+
 1. Verify server URL is correct (check for typos)
 2. Test server accessibility:
    ```bash
@@ -322,6 +346,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: `401 Unauthorized` response
 
 **Solutions**:
+
 1. Verify secret matches server configuration
 2. Contact server administrator to confirm nickname is registered
 3. Check for extra spaces or characters in secret field
@@ -329,6 +354,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: `404 Not Found` response
 
 **Solutions**:
+
 1. Verify nickname exists on server
 2. Contact server administrator to register nickname
 3. Check server URL is correct
@@ -338,6 +364,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: App not detected as running
 
 **Solutions**:
+
 1. Verify package name is correct:
    ```bash
    adb shell pm list packages | grep your-package-name
@@ -352,6 +379,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: False positives (app detected as running when not)
 
 **Solutions**:
+
 1. Some apps have background services that persist
 2. Check actual app behavior with `adb shell dumpsys activity top`
 3. Consider monitoring specific activities instead of package name
@@ -361,6 +389,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: High CPU usage
 
 **Solutions**:
+
 1. Increase `check_interval_seconds` in config (e.g., 5 or 10 seconds)
 2. Check ADB version (update if old)
 3. Close unnecessary ADB sessions: `adb kill-server`
@@ -368,6 +397,7 @@ Ensure all required fields are present in `config.json`:
 **Problem**: Memory usage growing over time
 
 **Solutions**:
+
 1. This is unusual - report as bug if observed
 2. Restart monitor periodically (add to cron/systemd)
 3. Check for memory leaks in Python version
@@ -382,7 +412,7 @@ Create `/etc/systemd/system/mapleting-monitor.service`:
 
 ```ini
 [Unit]
-Description=Mapleting Monitor
+Description=MapleTing Monitor
 After=network.target
 
 [Service]
@@ -398,6 +428,7 @@ WantedBy=multi-user.target
 ```
 
 Enable and start:
+
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable mapleting-monitor
@@ -405,11 +436,13 @@ sudo systemctl start mapleting-monitor
 ```
 
 Check status:
+
 ```bash
 sudo systemctl status mapleting-monitor
 ```
 
 View logs:
+
 ```bash
 sudo journalctl -u mapleting-monitor -f
 ```
@@ -441,6 +474,7 @@ Create `~/Library/LaunchAgents/com.mapleting.monitor.plist`:
 ```
 
 Load service:
+
 ```bash
 launchctl load ~/Library/LaunchAgents/com.mapleting.monitor.plist
 ```
@@ -449,7 +483,7 @@ launchctl load ~/Library/LaunchAgents/com.mapleting.monitor.plist
 
 1. Open Task Scheduler
 2. Create Basic Task
-3. Name: "Mapleting Monitor"
+3. Name: "MapleTing Monitor"
 4. Trigger: At startup
 5. Action: Start a program
    - Program: `C:\path\to\python.exe`
@@ -469,6 +503,7 @@ cp config.json config-device2.json
 Edit each config with unique nickname and package.
 
 Run multiple instances:
+
 ```bash
 python monitor.py config-device1.json &
 python monitor.py config-device2.json &
@@ -493,21 +528,24 @@ If you're currently using the Telegram-based monitor:
 ### Changes Required
 
 1. **Update Configuration**:
+
    ```json
    {
-     "server_url": "https://your-new-server.com",
-     "nickname": "your-nickname",
-     "secret": "your-new-secret",
-     "package_name": "com.example.app",
-     "check_interval_seconds": 3
+   	"server_url": "https://your-new-server.com",
+   	"nickname": "your-nickname",
+   	"secret": "your-new-secret",
+   	"package_name": "com.example.app",
+   	"check_interval_seconds": 3
    }
    ```
 
 2. **Remove Old Fields**:
+
    - Remove `telegram_token`
    - Remove `telegram_chat_id`
 
 3. **Add New Fields**:
+
    - Add `server_url`
    - Add `secret`
 

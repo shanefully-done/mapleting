@@ -1,6 +1,6 @@
-# Mapleting Deployment Guide
+# MapleTing Deployment Guide
 
-Complete guide for deploying the Mapleting monitoring system to production, including Supabase database setup, Vercel deployment, and Python client distribution.
+Complete guide for deploying the MapleTing monitoring system to production, including Supabase database setup, Vercel deployment, and Python client distribution.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Complete guide for deploying the Mapleting monitoring system to production, incl
 
 ## Overview
 
-Mapleting consists of two main components that need to be deployed:
+MapleTing consists of two main components that need to be deployed:
 
 1. **Next.js Server** (PWA + API) - Deployed to Vercel or self-hosted
 2. **Python Client** (Monitoring Agent) - Distributed as standalone executable
@@ -37,7 +37,7 @@ Before deploying to production, ensure you have:
 
 ## Supabase Setup
 
-Supabase provides the PostgreSQL database for the Mapleting server.
+Supabase provides the PostgreSQL database for the MapleTing server.
 
 ### Step 1: Create a Supabase Project
 
@@ -62,18 +62,21 @@ Supabase provides the PostgreSQL database for the Mapleting server.
 6. Click **"Run"** (or press `Cmd/Ctrl + Enter`)
 
 This creates:
+
 - `nicknames` table (monitored devices/applications)
 - `push_subscriptions` table (user notification subscriptions)
 - Required indexes for performance
 
 **Verification**:
+
 ```sql
 -- Verify tables were created
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public';
 ```
 
 Expected output:
+
 ```
 table_name
 -----------
@@ -87,13 +90,16 @@ push_subscriptions
 2. Copy the following values:
 
 **Project Configuration**:
+
 - **Project URL**: Under "Project API keys"
   ```
   https://xxxxxxxxxxxxx.supabase.co
   ```
 
 **API Keys**:
+
 - **anon public**: Under "Project API keys"
+
   ```
   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   ```
@@ -104,6 +110,7 @@ push_subscriptions
   ```
 
 **Important Security Notes**:
+
 - The `anon` key is safe to expose in client-side code
 - The `service_role` key bypasses Row Level Security (RLS) - **never expose it**
 - Store these securely - you'll need them for environment configuration
@@ -126,6 +133,7 @@ You can create nicknames via the Supabase dashboard or API:
    - `created_at`: Current timestamp in milliseconds
 
 **Example SQL**:
+
 ```sql
 INSERT INTO nicknames (id, nickname, secret, last_status, last_seen_at, created_at)
 VALUES (
@@ -147,6 +155,7 @@ Vercel is the recommended platform for deploying the Next.js server.
 ### Step 1: Prepare for Deployment
 
 1. **Push to Git Repository**:
+
    ```bash
    git init
    git add .
@@ -156,10 +165,11 @@ Vercel is the recommended platform for deploying the Next.js server.
    ```
 
 2. **Generate VAPID Keys**:
+
    ```bash
    npx web-push generate-vapid-keys
    ```
-   
+
    Save both keys securely.
 
 ### Step 2: Deploy to Vercel
@@ -167,22 +177,26 @@ Vercel is the recommended platform for deploying the Next.js server.
 **Option A: Via Vercel CLI**
 
 1. **Install Vercel CLI**:
+
    ```bash
    bun install -g vercel
    ```
 
 2. **Login to Vercel**:
+
    ```bash
    vercel login
    ```
 
 3. **Deploy from server directory**:
+
    ```bash
    cd server
    vercel
    ```
 
 4. **Follow the prompts**:
+
    - **Set up and deploy?**: `Y`
    - **Which scope?**: Select your account
    - **Link to existing project?**: `N`
@@ -213,6 +227,7 @@ Vercel is the recommended platform for deploying the Next.js server.
 3. Add the following variables:
 
 **Supabase Configuration**:
+
 ```
 NEXT_PUBLIC_SUPABASE_URL = https://xxxxxxxxxxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -220,6 +235,7 @@ SUPABASE_SERVICE_ROLE_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 **Web Push (VAPID) Configuration**:
+
 ```
 NEXT_PUBLIC_VAPID_PUBLIC_KEY = YOUR_PUBLIC_KEY_HERE
 VAPID_PRIVATE_KEY = YOUR_PRIVATE_KEY_HERE
@@ -227,12 +243,14 @@ VAPID_SUBJECT = mailto:admin@example.com
 ```
 
 **Application Configuration**:
+
 ```
 APP_BASE_URL = https://mapleting.vercel.app
 NODE_ENV = production
 ```
 
 **Important Notes**:
+
 - Use the exact variable names (case-sensitive)
 - No quotes around values
 - Click "Save" after adding each variable
@@ -261,16 +279,19 @@ After adding environment variables:
 ### Step 6: Verify Deployment
 
 1. **Visit your deployment URL**:
+
    ```
    https://mapleting.vercel.app
    ```
 
 2. **Check PWA Installability**:
+
    - Open Chrome DevTools → Application
    - Verify "Manifest" is found
    - Verify "Service Worker" is active
 
 3. **Test API Endpoints**:
+
    ```bash
    # Test heartbeat endpoint (should return 401 without auth)
    curl -X POST https://mapleting.vercel.app/api/heartbeat \
@@ -289,6 +310,7 @@ For full control, you can deploy to your own server.
 ### Step 1: Prepare Server
 
 **Requirements**:
+
 - Ubuntu 20.04+ or similar Linux distribution
 - Node.js 18.17+ or 20.x
 - 1GB RAM minimum (2GB recommended)
@@ -388,6 +410,7 @@ server {
 ```
 
 Enable site:
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/mapleting /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -450,18 +473,21 @@ NODE_ENV="production"
 ### Environment-Specific Values
 
 **Development**:
+
 ```bash
 APP_BASE_URL="http://localhost:3000"
 NODE_ENV="development"
 ```
 
 **Production (Vercel)**:
+
 ```bash
 APP_BASE_URL="https://your-app.vercel.app"
 NODE_ENV="production"
 ```
 
 **Production (Self-Hosted)**:
+
 ```bash
 APP_BASE_URL="https://your-domain.com"
 NODE_ENV="production"
@@ -476,16 +502,18 @@ Distribute the Python client to users who need to monitor Android applications.
 Build standalone executables for each platform:
 
 **Windows**:
+
 ```bash
 # On Windows machine
 cd client
 pip install pyinstaller
-pyinstaller --onefile --name MapletingMonitor monitor.py
+pyinstaller --onefile --name MapleTingMonitor monitor.py
 
-# Executable will be in dist/MapletingMonitor.exe
+# Executable will be in dist/MapleTingMonitor.exe
 ```
 
 **Linux**:
+
 ```bash
 cd client
 pip install pyinstaller
@@ -495,21 +523,23 @@ pyinstaller --onefile --name mapleting-monitor monitor.spec
 ```
 
 **macOS**:
+
 ```bash
 cd client
 pip install pyinstaller
-pyinstaller --onefile --name MapletingMonitor monitor.spec
+pyinstaller --onefile --name MapleTingMonitor monitor.spec
 
-# Executable will be in dist/MapletingMonitor
+# Executable will be in dist/MapleTingMonitor
 ```
 
 **Distribution Package**:
+
 ```bash
 # Create distribution package
 cd dist
-zip mapleting-monitor-windows.zip MapletingMonitor.exe
+zip mapleting-monitor-windows.zip MapleTingMonitor.exe
 zip mapleting-monitor-linux.zip mapleting-monitor
-zip mapleting-monitor-macos.zip MapletingMonitor
+zip mapleting-monitor-macos.zip MapleTingMonitor
 
 # Include README and config example
 cp ../README.md .
@@ -533,6 +563,7 @@ tar -czf mapleting-monitor-source.tar.gz \
 ### Option 3: Package Managers (Advanced)
 
 **PyPI (Python Package Index)**:
+
 ```bash
 # Create setup.py
 cat > setup.py << 'EOF'
@@ -568,15 +599,15 @@ Include these instructions with the distributed client:
 3. **Edit `config.json` with your settings**:
    ```json
    {
-     "server_url": "https://your-server.com",
-     "nickname": "your-device-name",
-     "secret": "your-secret-from-server-admin",
-     "package_name": "com.example.app",
-     "check_interval_seconds": 3
+   	"server_url": "https://your-server.com",
+   	"nickname": "your-device-name",
+   	"secret": "your-secret-from-server-admin",
+   	"package_name": "com.example.app",
+   	"check_interval_seconds": 3
    }
    ```
 4. **Run the monitor**:
-   - **Windows**: Double-click `MapletingMonitor.exe`
+   - **Windows**: Double-click `MapleTingMonitor.exe`
    - **Linux/macOS**: `./mapleting-monitor` or `python monitor.py`
 
 ## Production Considerations
@@ -584,6 +615,7 @@ Include these instructions with the distributed client:
 ### Security
 
 **1. Secrets Management**:
+
 - Never commit `.env.local` or secrets to version control
 - Rotate VAPID keys periodically (every 6-12 months)
 - Use strong, random secrets for nicknames (32+ characters)
@@ -591,10 +623,12 @@ Include these instructions with the distributed client:
 
 **2. Rate Limiting**:
 The `/api/heartbeat` endpoint implements per-nickname rate limiting:
+
 - **Limit**: 1 request per second per nickname
 - **Production**: Consider using Redis for distributed rate limiting
 
 **3. SSL/TLS**:
+
 - Web Push API requires HTTPS
 - Use valid SSL certificates (Let's Encrypt is free)
 - Never use self-signed certificates in production
@@ -603,6 +637,7 @@ The `/api/heartbeat` endpoint implements per-nickname rate limiting:
 
 **1. Database Indexing**:
 Indexes are already created in [`schema.sql`](server/lib/schema.sql:1):
+
 ```sql
 CREATE INDEX idx_nicknames_nickname ON nicknames(nickname);
 CREATE INDEX idx_subscriptions_nicknameId ON push_subscriptions(nickname_id);
@@ -613,6 +648,7 @@ Supabase provides automatic connection pooling. No additional configuration need
 
 **3. Caching Strategy**:
 Consider caching nickname → UUID resolution:
+
 - **In-Memory Cache**: Simple, effective for single-instance deployments
 - **Redis**: For distributed deployments
 - **TTL**: 5 minutes recommended
@@ -620,6 +656,7 @@ Consider caching nickname → UUID resolution:
 ### Scalability
 
 **Current Limits (Single Instance)**:
+
 - Nicknames: 10,000
 - Subscriptions: 100,000
 - Notifications/second: 1,000
@@ -627,11 +664,13 @@ Consider caching nickname → UUID resolution:
 **Scaling Strategies**:
 
 1. **Multiple Next.js Instances**:
+
    - Use load balancer (Vercel handles this automatically)
    - Shared database (Supabase)
    - Redis for distributed rate limiting
 
 2. **Message Queue**:
+
    - Queue push notifications instead of sending synchronously
    - Process notifications with background workers
    - Better handling of slow/broken push endpoints
@@ -646,12 +685,14 @@ Consider caching nickname → UUID resolution:
 **Key Metrics to Track**:
 
 1. **Application Metrics**:
+
    - Heartbeat rate per nickname
    - Push notification success rate
    - API response times (p50, p95, p99)
    - Error rates (4xx, 5xx)
 
 2. **Database Metrics**:
+
    - Connection pool usage
    - Query performance
    - Table sizes
@@ -665,16 +706,19 @@ Consider caching nickname → UUID resolution:
 **Monitoring Tools**:
 
 **Vercel Analytics** (built-in):
+
 - Go to Vercel project dashboard
 - Navigate to Analytics tab
 - View metrics and performance data
 
 **Supabase Dashboard**:
+
 - Database insights
 - Query performance
 - Storage usage
 
 **External Monitoring** (optional):
+
 - Datadog, New Relic, or similar
 - Uptime monitoring (Pingdom, UptimeRobot)
 - Error tracking (Sentry)
@@ -682,6 +726,7 @@ Consider caching nickname → UUID resolution:
 ### Backup Strategy
 
 **Supabase Backup**:
+
 - Supabase provides automated backups (paid plans)
 - Enable point-in-time recovery for critical data
 - Export database regularly:
@@ -691,6 +736,7 @@ Consider caching nickname → UUID resolution:
   ```
 
 **Configuration Backup**:
+
 - Version control all configuration files
 - Document all environment variables
 - Keep secure backup of secrets (password manager)
@@ -700,6 +746,7 @@ Consider caching nickname → UUID resolution:
 ### Health Checks
 
 **Endpoint Health Check**:
+
 ```bash
 # Check if server is responding
 curl https://your-server.com/api/heartbeat
@@ -709,6 +756,7 @@ curl https://your-server.com/api/heartbeat
 ```
 
 **Database Connection**:
+
 ```bash
 # Via Supabase Dashboard
 # Go to Database → Logs
@@ -718,11 +766,13 @@ curl https://your-server.com/api/heartbeat
 ### Log Management
 
 **Vercel Logs**:
+
 - Deployments → Latest Deployment → Function Logs
 - Real-time log streaming
 - 7-day retention (free tier)
 
 **Self-Hosted Logs**:
+
 ```bash
 # PM2 logs
 pm2 logs mapleting
@@ -738,21 +788,25 @@ tail -f /var/log/nginx/error.log
 ### Regular Maintenance Tasks
 
 **Daily**:
+
 - Monitor error rates
 - Check push notification delivery success
 - Verify database connection
 
 **Weekly**:
+
 - Review and clean up expired subscriptions
 - Check disk usage and database size
 - Review security logs
 
 **Monthly**:
+
 - Test backup restoration
 - Review and update dependencies
 - Performance optimization review
 
 **Quarterly**:
+
 - Security audit
 - VAPID key rotation (optional)
 - Capacity planning review
@@ -764,6 +818,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Vercel deployment fails
 
 **Solutions**:
+
 1. Check build logs in Vercel dashboard
 2. Verify all dependencies are in `package.json`
 3. Ensure Node.js version matches `.nvmrc`
@@ -772,6 +827,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Environment variables not loading
 
 **Solutions**:
+
 1. Verify variable names match exactly (case-sensitive)
 2. Redeploy after adding variables
 3. Check Vercel dashboard → Settings → Environment Variables
@@ -780,6 +836,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Database connection errors
 
 **Solutions**:
+
 1. Verify Supabase project is not paused
 2. Check `NEXT_PUBLIC_SUPABASE_URL` is correct
 3. Verify API keys are current
@@ -790,6 +847,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Push notifications not delivered
 
 **Solutions**:
+
 1. Verify VAPID keys are correctly set
 2. Check browser console for errors
 3. Test push notification with web-push library
@@ -798,6 +856,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: High latency on API endpoints
 
 **Solutions**:
+
 1. Check database query performance (Supabase insights)
 2. Verify indexes are created
 3. Consider caching nickname resolution
@@ -806,6 +865,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Service worker not registering
 
 **Solutions**:
+
 1. Verify HTTPS is enabled (required for service workers)
 2. Check `public/sw.js` exists and is accessible
 3. Clear browser cache and service workers
@@ -816,6 +876,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Client cannot connect to server
 
 **Solutions**:
+
 1. Verify `server_url` in client config
 2. Check server is running and accessible
 3. Verify network connectivity
@@ -824,6 +885,7 @@ tail -f /var/log/nginx/error.log
 **Problem**: Authentication failures (401)
 
 **Solutions**:
+
 1. Verify secret matches server configuration
 2. Check `Authorization` header format
 3. Ensure nickname exists in database
@@ -857,4 +919,4 @@ tail -f /var/log/nginx/error.log
 - [ ] Monitoring and logging configured
 - [ ] Backup strategy implemented
 
-You're now ready to use Mapleting in production! 🚀
+You're now ready to use MapleTing in production! 🚀
