@@ -118,8 +118,9 @@ export default function TestPushPage() {
       addLog('✓ Push subscription successful!');
       addLog(`Endpoint: ${subscription.endpoint.substring(0, 50)}...`);
       addLog(`Keys present: ${subscription.getKey('p256dh') ? 'yes' : 'no'} (p256dh), ${subscription.getKey('auth') ? 'yes' : 'no'} (auth)`);
-    } catch (error: any) {
-      addLog(`✗ Push subscription failed: ${error.message || error}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      addLog(`✗ Push subscription failed: ${errorMessage}`);
       addLog(`Error details: ${JSON.stringify(error)}`);
     }
   };

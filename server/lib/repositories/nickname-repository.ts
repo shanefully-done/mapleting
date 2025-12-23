@@ -3,6 +3,7 @@
 
 import { getAdminClient } from "../db";
 import type { Nickname, NewNickname } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Repository class for nickname operations
@@ -149,7 +150,6 @@ export class NicknameRepository {
       }
 
       // Nickname doesn't exist, create it
-      const { v4: uuidv4 } = require("uuid");
       const newNickname: NewNickname = {
         id: uuidv4(),
         nickname,

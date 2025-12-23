@@ -6,7 +6,7 @@ import { SubscriptionButton } from '@/components/subscription-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface PageProps {
@@ -218,7 +218,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
               <p>
-                • You'll receive a push notification when the device transitions from connected to disconnected
+                • You&apos;ll receive a push notification when the device transitions from connected to disconnected
               </p>
               <p>
                 • Notifications work even when this page is closed or your browser is not running
