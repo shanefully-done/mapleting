@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { encodeNicknameForUrl } from '@/lib/url-utils';
 import { Bell, Smartphone, Shield, Globe } from 'lucide-react';
+import { PWAInstallButton } from '@/components/pwa-install-button';
 
 export default function Home() {
   const [nickname, setNickname] = useState('');
@@ -177,18 +178,7 @@ export default function Home() {
           </Card>
 
           {/* PWA Install Prompt */}
-          <Card className="bg-primary/5 border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-base">Install as App</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Install this as a Progressive Web App (PWA) for the best experience.
-                Look for the &quot;Install&quot; button in your browser&apos;s address bar
-                or add to home screen on mobile devices.
-              </p>
-            </CardContent>
-          </Card>
+          <PWAInstallButton />
         </div>
       </main>
 

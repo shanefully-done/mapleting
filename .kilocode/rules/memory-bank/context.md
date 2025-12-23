@@ -18,12 +18,10 @@ The project is in the **architecture and specification phase**. We are analyzing
 - 🔄 Planning migration strategy from Telegram to Web Push
 
 ### Next Steps
-1. Implement Next.js server with API routes
-2. Create heartbeat endpoint (`POST /api/heartbeat`)
-3. Implement push subscription management
-4. Build PWA manifest and service worker
-5. Create subscription UI for users
-6. Migrate Python client to use new API
+1. Test PWA install button on different browsers (Chrome, Safari, Firefox)
+2. Verify install prompt appears correctly on iOS devices
+3. Test that button hides when app is installed
+4. Consider adding PWA install button to header for more visibility
 
 ## Recent Changes
 
