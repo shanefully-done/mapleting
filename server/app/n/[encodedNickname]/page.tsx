@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { decodeNicknameFromUrl } from "@/lib/url-utils";
 import { createClient } from "@/lib/db";
 import { SubscriptionButton } from "@/components/subscription-button";
-import { PWAInstallButton } from "@/components/pwa-install-button";
+import { PWAInstallBanner } from "@/components/pwa-install-button";
 import {
 	Card,
 	CardContent,
@@ -223,7 +223,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 					</Card>
 
 					{/* PWA Install Prompt */}
-					<PWAInstallButton />
+					<PWAInstallBanner />
 
 					{/* Info Card */}
 					<Card className="bg-primary/5 border-primary/20">

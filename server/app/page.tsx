@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { encodeNicknameForUrl } from "@/lib/url-utils";
 import { Bell } from "lucide-react";
-import { PWAInstallButton } from "@/components/pwa-install-button";
+import { PWAInstallBanner } from "@/components/pwa-install-button";
 
 export default function Home() {
 	const [nickname, setNickname] = useState("");
@@ -178,15 +178,14 @@ export default function Home() {
 									받습니다
 								</li>
 								<li>
-									<strong>앱으로 설치</strong> - 네이티브 앱 경험을 위해 홈 화면에
-									추가하세요 (선택 사항)
+									<strong>앱으로 설치</strong> - 모바일은 홈 화면에 추가하세요
 								</li>
 							</ol>
 						</CardContent>
 					</Card>
 
 					{/* PWA Install Prompt */}
-					<PWAInstallButton />
+					<PWAInstallBanner />
 				</div>
 			</main>
 

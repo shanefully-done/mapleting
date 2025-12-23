@@ -1,243 +1,140 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent } from './ui/card';
-import { Download, X, Share2, Plus } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { X, Share2, Plus, Smartphone } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+	prompt: () => Promise<void>;
+	userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-interface IOSNavigator extends Navigator {
-  standalone?: boolean;
+// Extend Navigator interface to include iOS-specific standalone property
+declare global {
+	interface Navigator {
+		standalone?: boolean;
+	}
 }
 
-/**
- * PWA Install Button Component
- * 
- * Displays an install button when the PWA can be installed.
- * Handles the beforeinstallprompt event and prompts the user to install.
- */
-export function PWAInstallButton() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+export function PWAInstallBanner() {
+	const [deferredPrompt, setDeferredPrompt] =
+		useState<BeforeInstallPromptEvent | null>(null);
+	const [isVisible, setIsVisible] = useState(false);
+	const [isInstalled, setIsInstalled] = useState(false);
+	const [isIOS, setIsIOS] = useState(false);
 
-  useEffect(() => {
-    // Check if app is already installed
-    if (typeof window !== 'undefined') {
-      // Check for standalone mode (installed PWA)
-      const isStandalone =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as IOSNavigator).standalone === true;
-      
-      if (isStandalone) {
-        setIsInstalled(true);
-        return;
-      }
+	useEffect(() => {
+		if (typeof window === "undefined") return;
 
-      // Check if running on iOS
-      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-                         !(window.navigator as IOSNavigator).standalone;
-      setIsIOS(isIOSDevice);
+		const isStandalone =
+			window.matchMedia("(display-mode: standalone)").matches ||
+			window.navigator.standalone === true;
 
-      // Listen for beforeinstallprompt event (Chrome, Edge, Firefox)
-      const handleBeforeInstallPrompt = (e: Event) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later
-        setDeferredPrompt(e as BeforeInstallPromptEvent);
-        setShowInstallPrompt(true);
-      };
+		if (isStandalone) {
+			setIsInstalled(true);
+			return;
+		}
 
-      // Listen for appinstalled event
-      const handleAppInstalled = () => {
-        setShowInstallPrompt(false);
-        setDeferredPrompt(null);
-        setIsInstalled(true);
-      };
+		// iOS Detection
+		const isIOSDevice =
+			/iPad|iPhone|iPod/.test(navigator.userAgent) &&
+			!window.navigator.standalone;
+		setIsIOS(isIOSDevice);
 
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.addEventListener('appinstalled', handleAppInstalled);
+		// Show iOS instructions after a short delay if not installed
+		if (isIOSDevice) {
+			const timer = setTimeout(() => setIsVisible(true), 2000);
+			return () => clearTimeout(timer);
+		}
 
-      return () => {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        window.removeEventListener('appinstalled', handleAppInstalled);
-      };
-    }
-  }, []);
+		const handleBeforeInstallPrompt = (e: Event) => {
+			e.preventDefault();
+			setDeferredPrompt(e as BeforeInstallPromptEvent);
+			setIsVisible(true);
+		};
 
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      return;
-    }
+		window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+		return () =>
+			window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+	}, []);
 
-    // Show the install prompt
-    deferredPrompt.prompt();
+	const handleInstall = async () => {
+		if (!deferredPrompt) return;
+		deferredPrompt.prompt();
+		const { outcome } = await deferredPrompt.userChoice;
+		if (outcome === "accepted") setIsVisible(false);
+		setDeferredPrompt(null);
+	};
 
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
+	if (isInstalled || !isVisible) return null;
 
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
-    } else {
-      console.log('User dismissed the install prompt');
-    }
+	return (
+		<div className="fixed bottom-4 left-0 right-0 z-50 px-4 animate-in fade-in slide-in-from-bottom-5 duration-500 sm:left-auto sm:right-4 sm:max-w-sm">
+			<Card className="overflow-hidden border-none shadow-2xl ring-1 ring-black/5 bg-background/95 backdrop-blur-md">
+				<div className="p-4">
+					<div className="flex items-start gap-4">
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+							<Smartphone className="h-6 w-6" />
+						</div>
 
-    // Clear the deferredPrompt
-    setDeferredPrompt(null);
-    setShowInstallPrompt(false);
-  };
+						<div className="flex-1">
+							<div className="flex items-center justify-between">
+								<h3 className="font-semibold text-sm tracking-tight text-foreground">
+									앱으로 설치하기
+								</h3>
+								<button
+									onClick={() => setIsVisible(false)}
+									className="rounded-full p-1 text-muted-foreground hover:bg-muted transition-colors"
+								>
+									<X className="h-4 w-4" />
+								</button>
+							</div>
 
-  const handleDismiss = () => {
-    setShowInstallPrompt(false);
-  };
+							<p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+								{isIOS
+									? "Safari 브라우저에서 홈 화면에 추가하여 더 편하게 이용하세요."
+									: "홈 화면에 추가하여 오프라인에서도 끊김 없이 이용해 보세요."}
+							</p>
 
-  // Don't show anything if already installed or no prompt available
-  if (isInstalled || (!showInstallPrompt && !isIOS)) {
-    return null;
-  }
-
-  // iOS doesn't support beforeinstallprompt, show instructions
-  if (isIOS) {
-    return (
-      <Card className="bg-primary/5 border-primary/20">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <Download className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-            <div className="flex-1 space-y-3">
-              <div>
-                <p className="text-sm font-medium">앱으로 설치</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  iOS 기기에서 최상의 앱 경험을 누리세요
-                </p>
-              </div>
-              <div className="rounded-lg bg-background p-3 space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Share2 className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span className="font-medium">공유 버튼을 탭하세요</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Plus className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span className="font-medium">&quot;홈 화면에 추가&quot;를 선택하세요</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Show install prompt for supported browsers
-  return (
-    <Card className="bg-primary/5 border-primary/20">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <Download className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-          <div className="flex-1 space-y-2">
-            <p className="text-sm font-medium">앱으로 설치</p>
-            <p className="text-xs text-muted-foreground">
-              오프라인 지원과 함께 최상의 경험을 위해 이 앱을 설치하세요.
-            </p>
-            <div className="flex gap-2">
-              <Button 
-                size="sm" 
-                onClick={handleInstallClick}
-                className="h-8 text-xs"
-              >
-                설치
-              </Button>
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                onClick={handleDismiss}
-                className="h-8 text-xs"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-/**
- * Compact PWA Install Button
- * A smaller version for use in headers or tight spaces
- */
-export function PWAInstallButtonCompact() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallButton, setShowInstallButton] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isStandalone =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as IOSNavigator).standalone === true;
-      
-      if (isStandalone) {
-        setIsInstalled(true);
-        return;
-      }
-
-      const handleBeforeInstallPrompt = (e: Event) => {
-        e.preventDefault();
-        setDeferredPrompt(e as BeforeInstallPromptEvent);
-        setShowInstallButton(true);
-      };
-
-      const handleAppInstalled = () => {
-        setShowInstallButton(false);
-        setDeferredPrompt(null);
-        setIsInstalled(true);
-      };
-
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.addEventListener('appinstalled', handleAppInstalled);
-
-      return () => {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        window.removeEventListener('appinstalled', handleAppInstalled);
-      };
-    }
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      return;
-    }
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
-    }
-    
-    setDeferredPrompt(null);
-    setShowInstallButton(false);
-  };
-
-  if (isInstalled || !showInstallButton) {
-    return null;
-  }
-
-  return (
-    <Button 
-      size="sm" 
-      onClick={handleInstallClick}
-      variant="outline"
-      className="gap-2"
-    >
-      <Download className="h-4 w-4" />
-      앱 설치
-    </Button>
-  );
+							{isIOS ? (
+								<div className="mt-4 grid grid-cols-2 gap-2">
+									<div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-2 text-[11px] font-medium">
+										<Share2 className="h-3.5 w-3.5 text-blue-500" />
+										<span>공유 버튼 탭</span>
+									</div>
+									<div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-2 text-[11px] font-medium">
+										<Plus className="h-3.5 w-3.5 text-primary" />
+										<span>홈 화면 추가</span>
+									</div>
+								</div>
+							) : (
+								<div className="mt-4 flex gap-2">
+									<Button
+										onClick={handleInstall}
+										size="sm"
+										className="flex-1 rounded-lg text-xs font-semibold shadow-sm"
+									>
+										지금 설치
+									</Button>
+									<Button
+										onClick={() => setIsVisible(false)}
+										variant="outline"
+										size="sm"
+										className="flex-1 rounded-lg text-xs font-semibold"
+									>
+										나중에
+									</Button>
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
+				{/* Subtle Progress Bar (Optional Decoration) */}
+				<div className="h-1 w-full bg-primary/20">
+					<div className="h-full w-1/3 bg-primary animate-pulse" />
+				</div>
+			</Card>
+		</div>
+	);
 }
