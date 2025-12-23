@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { encodeNicknameForUrl } from "@/lib/url-utils";
-import { Bell, Smartphone } from "lucide-react";
+import { Bell } from "lucide-react";
 import { PWAInstallButton } from "@/components/pwa-install-button";
 
 export default function Home() {
@@ -168,7 +168,7 @@ export default function Home() {
 							<ol className="list-decimal list-inside space-y-2 text-sm">
 								<li>
 									<strong>캐릭터 닉네임 입력</strong> - 위 입력창에 캐릭터 닉네임을
-									입력하고 "조회" 버튼을 클릭하세요
+									입력하고 &quote;조회&quote; 버튼을 클릭하세요
 								</li>
 								<li>
 									<strong>알림 활성화</strong> - 브라우저에서 푸시 알림을 허용하세요
