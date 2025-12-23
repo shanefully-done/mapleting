@@ -36,8 +36,8 @@ jobs:
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: monitor-windows
-          path: client/dist/monitor.exe
+          name: mapleting-windows
+          path: client/dist/mapleting.exe
           retention-days: 7
 
   build-macos:
@@ -64,8 +64,8 @@ jobs:
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: monitor-macos
-          path: client/dist/monitor
+          name: mapleting-macos
+          path: client/dist/mapleting
           retention-days: 7
 
   create-release:
@@ -84,13 +84,13 @@ jobs:
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
-          name: monitor-windows
+          name: mapleting-windows
           path: ./artifacts/windows
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
         with:
-          name: monitor-macos
+          name: mapleting-macos
           path: ./artifacts/macos
 
       - name: Determine version
@@ -107,8 +107,8 @@ jobs:
       - name: Create checksums
         run: |
           cd artifacts
-          sha256sum windows/monitor.exe > checksums.txt
-          sha256sum macos/monitor >> checksums.txt
+          sha256sum windows/mapleting.exe > checksums.txt
+          sha256sum macos/mapleting >> checksums.txt
           cat checksums.txt
 
       - name: Create Release
@@ -119,8 +119,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            artifacts/windows/monitor.exe
-            artifacts/macos/monitor
+            artifacts/windows/mapleting.exe
+            artifacts/macos/mapleting
             artifacts/checksums.txt
           body: |
             ## MapleTing ${{ steps.version.outputs.version }}
@@ -128,8 +128,8 @@ jobs:
 
             ### 다운로드
 
-            - Windows: monitor.exe
-            - macOS: monitor
+            - Windows: mapleting.exe
+            - macOS: mapleting
 
 
             ### 설치 방법
@@ -148,7 +148,7 @@ jobs:
             shasum -a 256 -c checksums.txt
 
             # Windows (PowerShell)
-            Get-FileHash monitor.exe -Algorithm SHA256
+            Get-FileHash mapleting.exe -Algorithm SHA256
             ```
 
 
