@@ -10,6 +10,10 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+interface IOSNavigator extends Navigator {
+  standalone?: boolean;
+}
+
 /**
  * PWA Install Button Component
  * 
@@ -26,9 +30,9 @@ export function PWAInstallButton() {
     // Check if app is already installed
     if (typeof window !== 'undefined') {
       // Check for standalone mode (installed PWA)
-      const isStandalone = 
+      const isStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true;
+        (window.navigator as IOSNavigator).standalone === true;
       
       if (isStandalone) {
         setIsInstalled(true);
@@ -36,8 +40,8 @@ export function PWAInstallButton() {
       }
 
       // Check if running on iOS
-      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && 
-                         !(window.navigator as any).standalone;
+      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+                         !(window.navigator as IOSNavigator).standalone;
       setIsIOS(isIOSDevice);
 
       // Listen for beforeinstallprompt event (Chrome, Edge, Firefox)
@@ -162,9 +166,9 @@ export function PWAInstallButtonCompact() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isStandalone = 
+      const isStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true;
+        (window.navigator as IOSNavigator).standalone === true;
       
       if (isStandalone) {
         setIsInstalled(true);
