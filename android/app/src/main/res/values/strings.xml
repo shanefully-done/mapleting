@@ -3,40 +3,32 @@
     
     <!-- Configuration -->
     <string name="configuration">Configuration</string>
-    <string name="nickname_hint">Your character name</string>
+    <string name="character_name_hint">Character Name (Nickname)</string>
+    <string name="advanced_config">Advanced Config</string>
     <string name="package_name_hint_optional">Package name (default: com.nexon.ma)</string>
     <string name="server_url_hint_optional">Server URL (default: https://mapleting.vercel.app)</string>
-    <string name="show_advanced_settings">Show advanced settings</string>
     
     <!-- Status -->
     <string name="status_stopped">● Stopped</string>
     <string name="status_monitoring">● Monitoring</string>
-    <string name="current_config">Current Config:</string>
-    <string name="no_config_saved">No configuration saved</string>
     
     <!-- Buttons -->
     <string name="start_monitoring">Start Monitoring</string>
     <string name="stop_monitoring">Stop Monitoring</string>
-    <string name="open_battery_settings">Open Battery Settings</string>
+    <string name="open_battery_settings">⚙️ Battery Optimization</string>
+    <string name="open_accessibility_settings">♿ Accessibility Service</string>
     
     <!-- Battery Optimization -->
     <string name="battery_optimization_checking">Checking battery optimization…</string>
     <string name="battery_optimization_disabled">Battery Optimization: Disabled ✓</string>
     <string name="battery_optimization_enabled">Battery Optimization: Enabled (may stop monitoring)</string>
-    <string name="battery_optimization_explanation">Disable battery optimization to ensure reliable monitoring</string>
     
     <!-- Accessibility Permission -->
     <string name="accessibility_permission_checking">Checking accessibility permission…</string>
     <string name="accessibility_permission_status">Accessibility Service: %s</string>
     <string name="accessibility_enabled">Enabled ✓</string>
     <string name="accessibility_disabled">Disabled (required for foreground detection)</string>
-    <string name="open_accessibility_settings">Open Accessibility Settings</string>
     <string name="accessibility_service_description">Monitors foreground app changes to detect when monitored app leaves the foreground. Your data is NOT collected or transmitted.</string>
-    
-    <!-- Config Display -->
-    <string name="config_nickname">Nickname: %s</string>
-    <string name="config_package">Package: %s</string>
-    <string name="config_server">Server: %s</string>
     
     <!-- Errors -->
     <string name="error_invalid_config">Invalid configuration. Please check all fields.</string>
@@ -49,9 +41,4 @@
     <string name="notification_running">Running</string>
     <string name="notification_stopped">Stopped</string>
     <string name="notification_last_heartbeat">Last heartbeat: %s</string>
-    
-    <!-- Logs -->
-    <string name="logs_title">Activity Logs:</string>
-    <string name="no_logs_yet">No logs yet</string>
-    <string name="clear_logs">Clear Logs</string>
 </resources>

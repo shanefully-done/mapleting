@@ -2,10 +2,8 @@ package com.mapleting.monitor
 
 import android.Manifest
 import android.app.ActivityManager
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -14,30 +12,26 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.mapleting.monitor.adapter.AppInfoAdapter
 import com.mapleting.monitor.databinding.ActivityMainBinding
-import com.mapleting.monitor.data.AppInfoItem
 import com.mapleting.monitor.data.MonitorConfig
-import com.mapleting.monitor.data.LogManager
 import com.mapleting.monitor.service.ForegroundAccessibilityService
 import com.mapleting.monitor.service.MonitoringService
 import com.mapleting.monitor.utils.AccessibilityUtils
 import com.mapleting.monitor.viewmodel.MonitoringState
 import com.mapleting.monitor.viewmodel.MonitoringViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MonitoringViewModel
     private var isMonitoring = false
+    private var isAdvancedConfigExpanded = false
     
     // Permission launcher for POST_NOTIFICATIONS
     private val requestPermissionLauncher = registerForActivityResult(
@@ -63,9 +57,6 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         checkBatteryOptimization()
         checkAccessibilityPermission()
-        
-        // Load persisted logs
-        viewModel.loadLogs(application)
     }
     
     override fun onResume() {
@@ -75,20 +66,10 @@ class MainActivity : AppCompatActivity() {
         checkIfServiceRunning()
     }
     
-    override fun onPause() {
-        super.onPause()
-        // Save logs when activity is paused
-        viewModel.saveLogs(application)
-    }
-    
     private fun setupUI() {
-        // Advanced settings toggle
-        binding.advancedCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            binding.serverUrlLayout.visibility = if (isChecked) {
-                android.view.View.VISIBLE
-            } else {
-                android.view.View.GONE
-            }
+        // Advanced config toggle
+        binding.advancedConfigHeader.setOnClickListener {
+            toggleAdvancedConfig()
         }
         
         // Start/Stop button
@@ -110,52 +91,29 @@ class MainActivity : AppCompatActivity() {
             AccessibilityUtils.openAccessibilitySettings(this)
         }
         
-        // Clear logs button
-        binding.clearLogsButton.setOnClickListener {
-            viewModel.clearLogs()
-        }
-        
-        // Browse apps button
-        binding.browseAppsButton.setOnClickListener {
-            showAppPickerDialog()
-        }
-        
-        // Text change listeners for validation feedback
-        binding.nicknameEditText.addTextChangedListener(createTextWatcher())
-        binding.packageNameEditText.addTextChangedListener(createTextWatcher())
-        
-        // Tap-to-copy functionality for logs
-        binding.logsTextView.setOnClickListener {
-            copyLogsToClipboard()
-        }
-    }
-    
-    /**
-     * Copy all logs to clipboard
-     */
-    private fun copyLogsToClipboard() {
-        val logsText = binding.logsTextView.text?.toString()
-        if (logsText.isNullOrEmpty() || logsText == "No logs yet") {
-            Toast.makeText(this, "No logs to copy", Toast.LENGTH_SHORT).show()
-            return
-        }
-        
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-        val clip = android.content.ClipData.newPlainText("Mapleting Monitor Logs", logsText)
-        clipboard.setPrimaryClip(clip)
-        
-        Toast.makeText(this, "Logs copied to clipboard", Toast.LENGTH_SHORT).show()
-    }
-    
-    private fun createTextWatcher(): TextWatcher {
-        return object : TextWatcher {
+        // Text change listener for validation feedback
+        binding.nicknameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                // Clear errors when user types
+                // Clear error when user types
                 binding.nicknameLayout.error = null
-                binding.packageNameLayout.error = null
             }
+        })
+    }
+    
+    /**
+     * Toggle the advanced config section visibility
+     */
+    private fun toggleAdvancedConfig() {
+        isAdvancedConfigExpanded = !isAdvancedConfigExpanded
+        
+        if (isAdvancedConfigExpanded) {
+            binding.advancedConfigContent.visibility = View.VISIBLE
+            binding.advancedConfigIndicator.text = "▲"
+        } else {
+            binding.advancedConfigContent.visibility = View.GONE
+            binding.advancedConfigIndicator.text = "▼"
         }
     }
     
@@ -180,11 +138,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.batteryOptimizationEnabled.observe(this) { enabled ->
             enabled?.let { updateBatteryOptimizationUI(it) }
         }
-        
-        // Observe logs and update display
-        viewModel.logs.observe(this) { logEntries ->
-            updateLogsDisplay(logEntries)
-        }
     }
     
     private fun updateUIWithConfig(config: MonitorConfig?) {
@@ -192,17 +145,6 @@ class MainActivity : AppCompatActivity() {
             binding.nicknameEditText.setText(config.nickname)
             binding.packageNameEditText.setText(config.packageName)
             binding.serverUrlEditText.setText(config.serverUrl)
-            
-            // Update config display
-            val configText = buildString {
-                append("• Nickname: ${config.nickname}\n")
-                append("• Package: ${config.packageName}\n")
-                append("• Server: ${config.serverUrl}\n")
-                append("• Interval: ${config.checkInterval / 1000}s")
-            }
-            binding.configDisplayTextView.text = configText
-        } else {
-            binding.configDisplayTextView.text = getString(R.string.no_config_saved)
         }
     }
     
@@ -216,6 +158,7 @@ class MainActivity : AppCompatActivity() {
             binding.nicknameEditText.isEnabled = false
             binding.packageNameEditText.isEnabled = false
             binding.serverUrlEditText.isEnabled = false
+            binding.advancedConfigHeader.isEnabled = false
         } else {
             binding.statusTextView.text = getString(R.string.status_stopped)
             binding.statusTextView.setTextColor(getColor(R.color.status_stopped))
@@ -225,6 +168,7 @@ class MainActivity : AppCompatActivity() {
             binding.nicknameEditText.isEnabled = true
             binding.packageNameEditText.isEnabled = true
             binding.serverUrlEditText.isEnabled = true
+            binding.advancedConfigHeader.isEnabled = true
         }
     }
     
@@ -232,11 +176,11 @@ class MainActivity : AppCompatActivity() {
         if (enabled) {
             binding.batteryOptimizationTextView.text = getString(R.string.battery_optimization_enabled)
             binding.batteryOptimizationTextView.setTextColor(getColor(R.color.status_stopped))
-            binding.batteryOptimizationButton.visibility = android.view.View.VISIBLE
+            binding.batteryOptimizationButton.visibility = View.VISIBLE
         } else {
             binding.batteryOptimizationTextView.text = getString(R.string.battery_optimization_disabled)
             binding.batteryOptimizationTextView.setTextColor(getColor(R.color.status_running))
-            binding.batteryOptimizationButton.visibility = android.view.View.GONE
+            binding.batteryOptimizationButton.visibility = View.GONE
         }
     }
     
@@ -274,29 +218,10 @@ class MainActivity : AppCompatActivity() {
         
         if (enabled) {
             binding.accessibilityPermissionTextView.setTextColor(getColor(R.color.status_running))
-            binding.accessibilityPermissionButton.visibility = android.view.View.GONE
+            binding.accessibilityPermissionButton.visibility = View.GONE
         } else {
             binding.accessibilityPermissionTextView.setTextColor(getColor(R.color.status_stopped))
-            binding.accessibilityPermissionButton.visibility = android.view.View.VISIBLE
-        }
-    }
-    
-    /**
-     * Update the logs display with current log entries
-     */
-    private fun updateLogsDisplay(logEntries: List<com.mapleting.monitor.data.LogEntry>?) {
-        if (logEntries.isNullOrEmpty()) {
-            binding.logsTextView.text = "No logs yet"
-        } else {
-            val logsText = logEntries.joinToString("\n") { entry ->
-                entry.getFormattedLog()
-            }
-            binding.logsTextView.text = logsText
-            
-            // Auto-scroll to top (most recent log)
-            binding.logsScrollView.post {
-                binding.logsScrollView.scrollTo(0, 0)
-            }
+            binding.accessibilityPermissionButton.visibility = View.VISIBLE
         }
     }
     
@@ -321,7 +246,7 @@ class MainActivity : AppCompatActivity() {
         
         // Validate inputs
         if (nickname.isBlank()) {
-            binding.nicknameLayout.error = "Nickname is required"
+            binding.nicknameLayout.error = "Character name is required"
             return
         }
         
@@ -411,58 +336,5 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-    }
-    
-    /**
-     * Show a dialog with all installed apps to allow user to select package name
-     */
-    private fun showAppPickerDialog() {
-        // Get all installed applications
-        val pm = packageManager
-        val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        
-        // Filter out system apps (optional - keep user apps only)
-        val userApps = packages.filter { appInfo ->
-            (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
-        }
-        
-        // Create app info list with package name and app label
-        val appList = userApps.mapNotNull { appInfo ->
-            val label = try {
-                appInfo.loadLabel(pm).toString()
-            } catch (e: Exception) {
-                null
-            }
-            
-            if (label != null) {
-                AppInfoItem(label, appInfo.packageName)
-            } else {
-                null
-            }
-        }.sortedBy { it.label.lowercase() }
-        
-        if (appList.isEmpty()) {
-            Toast.makeText(this, "No apps found", Toast.LENGTH_SHORT).show()
-            return
-        }
-        
-        // Create adapter
-        val adapter = AppInfoAdapter(this, appList)
-        
-        // Show dialog with list
-        AlertDialog.Builder(this)
-            .setTitle("Select an App to Monitor")
-            .setAdapter(adapter) { _, which ->
-                // Set selected package name
-                val selectedApp = appList[which]
-                binding.packageNameEditText.setText(selectedApp.packageName)
-                Toast.makeText(
-                    this,
-                    "Selected: ${selectedApp.label}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 }

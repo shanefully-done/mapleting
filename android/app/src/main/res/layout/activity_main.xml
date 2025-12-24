@@ -31,14 +31,14 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
-        <!-- Nickname Input -->
+        <!-- Character Name (Nickname) Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nicknameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/nickname_hint"
+            android:hint="@string/character_name_hint"
             app:boxBackgroundMode="outline"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nicknameEditText"
@@ -49,68 +49,95 @@
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Package Name Input (Optional, has default) -->
-        <LinearLayout
+        <!-- Advanced Config Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/advancedConfigCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="8dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/packageNameLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/package_name_hint_optional"
-                app:boxBackgroundMode="outline">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/packageNameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/browseAppsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:text="Browse"
-                android:minWidth="80dp"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                app:cornerRadius="8dp" />
-        </LinearLayout>
-
-        <!-- Server URL Input (Advanced, has default) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/serverUrlLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/server_url_hint_optional"
-            app:boxBackgroundMode="outline"
-            android:layout_marginBottom="12dp"
-            android:visibility="gone">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/serverUrlEditText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textUri"
-                android:maxLines="1"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical">
 
-        <!-- Advanced Toggle -->
-        <CheckBox
-            android:id="@+id/advancedCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/show_advanced_settings"
-            android:layout_marginBottom="16dp" />
+                <!-- Advanced Config Header (Clickable) -->
+                <LinearLayout
+                    android:id="@+id/advancedConfigHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/advanced_config"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="start|center_vertical" />
+
+                    <TextView
+                        android:id="@+id/advancedConfigIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="▼"
+                        android:textSize="12sp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <!-- Advanced Config Content (Collapsible) -->
+                <LinearLayout
+                    android:id="@+id/advancedConfigContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <!-- Package Name Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/packageNameLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/package_name_hint_optional"
+                        app:boxBackgroundMode="outline"
+                        android:layout_marginBottom="12dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/packageNameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Server URL Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/serverUrlLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/server_url_hint_optional"
+                        app:boxBackgroundMode="outline">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/serverUrlEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textUri"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Status Display -->
         <TextView
@@ -131,17 +158,6 @@
             android:text="@string/start_monitoring"
             android:textSize="16sp"
             app:cornerRadius="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Test Detection Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/testDetectionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Test App Detection"
-            android:textSize="14sp"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            app:cornerRadius="8dp"
             android:layout_marginBottom="16dp" />
 
         <!-- Battery Optimization Section -->
@@ -158,9 +174,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/open_battery_settings"
+            android:icon="@android:drawable/ic_menu_manage"
             style="@style/Widget.Material3.Button.OutlinedButton"
             app:cornerRadius="8dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
         <!-- Accessibility Permission Section -->
         <TextView
@@ -176,63 +193,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/open_accessibility_settings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            app:cornerRadius="8dp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Current Config Display -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/current_config"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/configDisplayTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/no_config_saved"
-            android:textSize="14sp"
-            android:fontFamily="monospace"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Logs Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/logs_title"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <ScrollView
-            android:id="@+id/logsScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@android:color/black"
-            android:padding="8dp"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/logsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/no_logs_yet"
-                android:textSize="12sp"
-                android:fontFamily="monospace"
-                android:textColor="@android:color/white"
-                android:gravity="start|top" />
-        </ScrollView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/clearLogsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/clear_logs"
-            android:textSize="14sp"
+            android:icon="@android:drawable/ic_menu_add"
             style="@style/Widget.Material3.Button.OutlinedButton"
             app:cornerRadius="8dp" />
 
