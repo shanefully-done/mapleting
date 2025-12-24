@@ -32,7 +32,7 @@ The system supports two client approaches:
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │           Android App (Non-Technical Users)              │   │
 │  │           [android/app/]                                 │   │
-│  │  - Native APIs: ActivityManager/PackageManager           │   │
+│  │  - AccessibilityService: App status detection           │   │
 │  │  - ForegroundService: Background monitoring              │   │
 │  │  - HTTP Client: OkHttp for heartbeats                   │   │
 │  │  - Config: DataStore (nickname, package, secret)        │   │
@@ -431,14 +431,32 @@ mapleting/
 │   ├── mapleting.py                   # Main monitoring script
 │   ├── config.json                  # Client configuration
 │
-├── android/                         # Android monitoring app (future)
+├── android/                         # Android monitoring app
 │   ├── app/
 │   │   ├── src/main/
 │   │   │   ├── java/com/mapleting/monitor/
 │   │   │   │   ├── MainActivity.kt
 │   │   │   │   ├── MonitoringService.kt
-│   │   │   │   ├── AppStatusDetector.kt
-│   │   │   │   └── NetworkClient.kt
+│   │   │   │   ├── ForegroundAccessibilityService.kt
+│   │   │   │   ├── adapter/
+│   │   │   │   │   └── AppInfoAdapter.kt
+│   │   │   │   ├── data/
+│   │   │   │   │   ├── AppInfoItem.kt
+│   │   │   │   │   ├── ConfigRepository.kt
+│   │   │   │   │   ├── HeartbeatRequest.kt
+│   │   │   │   │   ├── HeartbeatResult.kt
+│   │   │   │   │   ├── LogEntry.kt
+│   │   │   │   │   ├── LogManager.kt
+│   │   │   │   │   └── MonitorConfig.kt
+│   │   │   │   ├── network/
+│   │   │   │   │   └── HeartbeatClient.kt
+│   │   │   │   ├── service/
+│   │   │   │   │   ├── ForegroundAccessibilityService.kt
+│   │   │   │   │   └── MonitoringService.kt
+│   │   │   │   ├── utils/
+│   │   │   │   │   └── AccessibilityUtils.kt
+│   │   │   │   └── viewmodel/
+│   │   │   │       └── MonitoringViewModel.kt
 │   │   └── build.gradle.kts
 │
 ├── server/                          # Next.js PWA

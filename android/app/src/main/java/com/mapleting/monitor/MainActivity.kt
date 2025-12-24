@@ -24,7 +24,6 @@ import com.mapleting.monitor.databinding.ActivityMainBinding
 import com.mapleting.monitor.data.AppInfoItem
 import com.mapleting.monitor.data.MonitorConfig
 import com.mapleting.monitor.data.LogManager
-import com.mapleting.monitor.detection.AppStatusDetector
 import com.mapleting.monitor.service.ForegroundAccessibilityService
 import com.mapleting.monitor.service.MonitoringService
 import com.mapleting.monitor.utils.AccessibilityUtils
@@ -99,11 +98,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 startMonitoring()
             }
-        }
-        
-        // Test Detection button
-        binding.testDetectionButton.setOnClickListener {
-            testAppDetection()
         }
         
         // Battery optimization button
@@ -399,70 +393,6 @@ class MainActivity : AppCompatActivity() {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-    }
-    
-    /**
-     * Test app detection immediately and show detailed results
-     */
-    private fun testAppDetection() {
-        val packageName = binding.packageNameEditText.text?.toString()?.trim() ?: ""
-        val finalPackageName = if (packageName.isBlank()) {
-            MonitorConfig.DEFAULT_PACKAGE_NAME
-        } else {
-            packageName
-        }
-        
-        // Log the test start
-        LogManager.addLog(
-            com.mapleting.monitor.data.LogEntry(
-                timestamp = System.currentTimeMillis(),
-                message = "════════════════════════════════════════",
-                type = com.mapleting.monitor.data.LogType.INFO
-            )
-        )
-        LogManager.addLog(
-            com.mapleting.monitor.data.LogEntry(
-                timestamp = System.currentTimeMillis(),
-                message = "MANUAL TEST: Detecting app: $finalPackageName",
-                type = com.mapleting.monitor.data.LogType.INFO
-            )
-        )
-        LogManager.addLog(
-            com.mapleting.monitor.data.LogEntry(
-                timestamp = System.currentTimeMillis(),
-                message = "════════════════════════════════════════",
-                type = com.mapleting.monitor.data.LogType.INFO
-            )
-        )
-        
-        // Run detection in background thread
-        CoroutineScope(Dispatchers.Default).launch {
-            val detector = AppStatusDetector(applicationContext)
-            val isRunning = detector.isAppRunning(finalPackageName)
-            
-            // Log result on main thread
-            CoroutineScope(Dispatchers.Main).launch {
-                val resultMessage = if (isRunning) {
-                    "✅ TEST RESULT: App IS RUNNING"
-                } else {
-                    "❌ TEST RESULT: App NOT RUNNING"
-                }
-                
-                LogManager.addLog(
-                    com.mapleting.monitor.data.LogEntry(
-                        timestamp = System.currentTimeMillis(),
-                        message = resultMessage,
-                        type = if (isRunning) com.mapleting.monitor.data.LogType.SUCCESS else com.mapleting.monitor.data.LogType.WARNING
-                    )
-                )
-                
-                Toast.makeText(
-                    this@MainActivity,
-                    resultMessage,
-                    Toast.LENGTH_LONG
-                ).show()
             }
         }
     }

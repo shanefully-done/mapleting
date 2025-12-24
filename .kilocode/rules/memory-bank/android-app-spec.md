@@ -48,12 +48,12 @@
                        ├──────────────┬──────────────────────┐
                        │              │                      │
                        ↓              ↓                      ↓
-              ┌─────────────┐ ┌──────────────┐    ┌──────────────┐
-              │App Status   │ │Network      │    │Local Storage │
-              │Detector     │ │Client       │    │(DataStore)   │
-              │ActivityMgr/ │ │OkHttp       │    │Config        │
-              │PkgManager   │ │HTTPS POST   │    │Persistence   │
-              └─────────────┘ └──────────────┘    └──────────────┘
+              ┌───────────────────┐ ┌──────────────┐    ┌──────────────┐
+              │Accessibility      │ │Network      │    │Local Storage │
+              │Service            │ │Client       │    │(DataStore)   │
+              │App State Events   │ │OkHttp       │    │Config        │
+              │                   │ │HTTPS POST   │    │Persistence   │
+              └───────────────────┘ └──────────────┘    └──────────────┘
 ```
 
 ### Component Responsibilities
@@ -74,10 +74,11 @@
 - Handle network failures gracefully
 - Survive app backgrounding and device sleep
 
-**AppStatusDetector**:
-- Check if target app is running using multiple methods
-- Fallback logic for different Android versions
-- Return boolean: app is running or not
+**ForegroundAccessibilityService**:
+- Detect app state changes via AccessibilityService
+- Receive accessibility events when apps open/close
+- Notify MonitoringService of state transitions
+- Requires user accessibility permission
 
 **NetworkClient**:
 - Send HTTPS POST requests to /api/heartbeat
@@ -436,105 +437,77 @@ fun openBatteryOptimizationSettings(context: Context) {
 
 ## App State Detection
 
-### Detection Methods
+### AccessibilityService-Based Detection
 
-#### Method 1: ActivityManager (API 1+)
+The Android app uses **AccessibilityService** for real-time app state detection. This approach is more reliable than periodic polling and works seamlessly across all Android versions.
 
-**Pros**: Works on all Android versions
-**Cons**: Deprecated in API 21, requires permission
+**How It Works**:
 
-```kotlin
-fun isAppRunningActivityManager(packageName: String): Boolean {
-    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    val runningProcesses = activityManager.runningAppProcesses ?: return false
-    
-    return runningProcesses.any { it.processName == packageName }
-}
-```
+1. User grants accessibility permission to the app
+2. ForegroundAccessibilityService receives accessibility events when apps open/close
+3. Service detects state transitions (running → stopped or stopped → running)
+4. State changes are communicated to MonitoringService via broadcast
 
-**Required Permission**: `<uses-permission android:name="android.permission.GET_TASKS" />`
+**Key Advantages**:
+- Real-time detection (no polling delays)
+- No special permissions beyond accessibility
+- Works reliably across Android versions
+- Minimal battery impact
+- Survives device sleep and screen-off states
 
-#### Method 2: UsageStatsManager (API 21+)
-
-**Pros**: More accurate, works with proper permission
-**Cons**: Requires user-granted permission
+**Implementation**:
 
 ```kotlin
-fun isAppRunningUsageStats(packageName: String): Boolean {
-    val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-    val currentTime = System.currentTimeMillis()
-    val stats = usageStatsManager.queryUsageStats(
-        UsageStatsManager.INTERVAL_DAILY,
-        currentTime - 1000 * 10, // Last 10 seconds
-        currentTime
-    )
-    
-    return stats?.any { it.packageName == packageName && it.lastTimeUsed >= currentTime - 1000 * 10 } ?: false
-}
-```
-
-**Required Permission**: `android.permission.PACKAGE_USAGE_STATS` (special permission, must be granted by user in settings)
-
-#### Method 3: PackageManager with ApplicationInfo (Simple Check)
-
-**Pros**: No special permissions, checks if app is installed
-**Cons**: Doesn't detect if app is currently running
-
-```kotlin
-fun isAppInstalled(packageName: String): Boolean {
-    return try {
-        context.packageManager.getPackageInfo(packageName, 0)
-        true
-    } catch (e: PackageManager.NameNotFoundException) {
-        false
-    }
-}
-```
-
-### Recommended Approach: Fallback Chain
-
-```kotlin
-class AppStatusDetector(private val context: Context) {
-    
-    fun isAppRunning(packageName: String): Boolean {
-        // Try UsageStatsManager first (most accurate)
-        if (hasUsageStatsPermission()) {
-            return isAppRunningUsageStats(packageName)
+class ForegroundAccessibilityService : AccessibilityService() {
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        event?.let {
+            when (it.eventType) {
+                AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                    val packageName = it.packageName?.toString()
+                    // Detect app state change and notify MonitoringService
+                    handleAppStateChange(packageName)
+                }
+            }
         }
-        
-        // Fallback to ActivityManager
-        return isAppRunningActivityManager(packageName)
     }
     
-    private fun hasUsageStatsPermission(): Boolean {
-        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = appOps.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            Process.myUid(),
-            context.packageName
-        )
-        return mode == AppOpsManager.MODE_ALLOWED
+    private fun handleAppStateChange(packageName: String?) {
+        // Check if this is the target package
+        if (packageName == targetPackageName) {
+            // Send broadcast to MonitoringService
+            val intent = Intent(ACTION_APP_STATE_CHANGED).apply {
+                putExtra(EXTRA_PACKAGE_NAME, packageName)
+                putExtra(EXTRA_IS_RUNNING, true)
+            }
+            sendBroadcast(intent)
+        }
     }
 }
 ```
 
-### State Transition Detection
+**State Transition Detection**:
 
 ```kotlin
 class MonitoringService : Service() {
-    private var lastAppStatus: Boolean? = null
-    
-    private fun checkAppStatusAndSendHeartbeat() {
-        val isRunning = appStatusDetector.isAppRunning(config.packageName)
-        
-        // Detect state transition
-        if (lastAppStatus != null && lastAppStatus != isRunning) {
-            // Transition detected: running -> stopped OR stopped -> running
-            val status = if (isRunning) "connected" else "disconnected"
-            sendHeartbeat(status)
+    private val appStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val packageName = intent?.getStringExtra(EXTRA_PACKAGE_NAME)
+            val isRunning = intent?.getBooleanExtra(EXTRA_IS_RUNNING, false) ?: false
+            
+            // Detect state transition
+            if (lastAppStatus != null && lastAppStatus != isRunning) {
+                val status = if (isRunning) "connected" else "disconnected"
+                sendHeartbeat(status)
+            }
+            
+            lastAppStatus = isRunning
         }
-        
-        lastAppStatus = isRunning
+    }
+    
+    override fun onCreate() {
+        super.onCreate()
+        // Register receiver for accessibility service events
+        registerReceiver(appStateReceiver, IntentFilter(ACTION_APP_STATE_CHANGED))
     }
 }
 ```
@@ -725,11 +698,6 @@ sealed class ConfigValidation {
     <!-- Android 13+ (API 33) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
-    <!-- Optional permissions (for better app detection) -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
-        tools:ignore="ProtectedPermissions" />
-    
     <!-- Optional (battery optimization) -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
@@ -751,8 +719,21 @@ sealed class ConfigValidation {
             </intent-filter>
         </activity>
         
+        <!-- Accessibility Service for app state detection -->
         <service
-            android:name=".MonitoringService"
+            android:name=".service.ForegroundAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+        
+        <service
+            android:name=".service.MonitoringService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse">
@@ -869,18 +850,18 @@ android {
 
 ### Unit Tests
 
-**AppStatusDetector Tests**:
+**AccessibilityService Tests**:
 ```kotlin
-class AppStatusDetectorTest {
+class ForegroundAccessibilityServiceTest {
     @Test
-    fun `isAppRunning returns true when app is in usage stats`() {
-        // Mock UsageStatsManager
-        // Test detection logic
+    fun `onAccessibilityEvent detects app state change`() {
+        // Mock accessibility event
+        // Verify broadcast sent to MonitoringService
     }
     
     @Test
-    fun `isAppRunning falls back to ActivityManager when permission denied`() {
-        // Test fallback logic
+    fun `service filters events by target package name`() {
+        // Verify only target package triggers detection
     }
 }
 ```
@@ -1045,7 +1026,7 @@ class MonitoringFlowTest {
 │  │         ↓                                           │  │
 │  │  ┌────────────────────────────────────────────────┐ │  │
 │  │  │        MonitoringService (Foreground)           │ │  │
-│  │  │  • Periodic app status checks (3s interval)    │ │  │
+│  │  │  • Receives app state events from AccessibilityService│ │  │
 │  │  │  • State transition detection                  │ │  │
 │  │  │  • HTTPS heartbeat to server                   │ │  │
 │  │  │  • Persistent notification                     │ │  │
@@ -1087,7 +1068,7 @@ Python Script → ADB → Device Status → HTTPS Heartbeat → Server
 
 **Android App (New)**:
 ```
-Android App → ActivityManager/PkgManager → App Status → HTTPS Heartbeat → Server
+Android App → AccessibilityService → App State Events → MonitoringService → HTTPS Heartbeat → Server
 ```
 
 **Benefits**:

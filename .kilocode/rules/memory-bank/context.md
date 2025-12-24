@@ -81,7 +81,7 @@ The system consists of multiple components:
 
 2. **Android Native App** ([`android/`](android/)) - Non-Technical Users ✅
 
-   - Monitors Android app status via native APIs
+   - Monitors Android app status via AccessibilityService
    - Runs directly on target device
    - No ADB setup required
    - Simple, intuitive UI
