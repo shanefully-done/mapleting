@@ -3,7 +3,7 @@ import { decodeNicknameFromUrl } from "@/lib/url-utils";
 import { createClient } from "@/lib/db";
 import { SubscriptionButton } from "@/components/subscription-button";
 import { PWAInstallBanner } from "@/components/pwa-install-button";
-import { TimestampDisplay } from "@/components/timestamp-display";
+import { NicknameStatusCard } from "@/components/nickname-status-card";
 import { RecentNicknameTracker } from "@/components/recent-nickname-tracker";
 import {
 	Card,
@@ -12,9 +12,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, XCircle } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
@@ -182,60 +181,8 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 			{/* Main Content */}
 			<main className="container mx-auto px-4 py-12">
 				<div className="max-w-2xl mx-auto space-y-6">
-					{/* Device Info Card */}
-					<Card>
-						<CardHeader>
-							<div className="flex items-start justify-between">
-								<div className="space-y-1">
-									<CardTitle className="text-2xl">{nickname}</CardTitle>
-									<CardDescription>
-										게임이 완전히 튕긴 경우에만 감지됩니다
-									</CardDescription>
-								</div>
-								<Badge
-									variant={isConnected ? "default" : "destructive"}
-									className="gap-1.5 text-sm"
-								>
-									{isConnected ? (
-										<>
-											<CheckCircle2 className="h-3.5 w-3.5" />
-											연결됨
-										</>
-									) : (
-										<>
-											<XCircle className="h-3.5 w-3.5" />
-											연결 끊김
-										</>
-									)}
-								</Badge>
-							</div>
-						</CardHeader>
-						<CardContent className="space-y-4">
-							{/* Status Description */}
-							<div className="p-4 rounded-lg bg-muted/50">
-								<p className="text-sm">
-									{isConnected ? (
-										<>
-											<span className="font-semibold text-green-600 dark:text-green-400">
-												디바이스가 온라인 상태입니다
-											</span>{" "}
-											오프라인이 되면 알림을 받게 됩니다.
-										</>
-									) : (
-										<>
-											<span className="font-semibold text-red-600 dark:text-red-400">
-												디바이스가 오프라인 상태입니다
-											</span>{" "}
-											점검이 필요할 수 있습니다.
-										</>
-									)}
-								</p>
-							</div>
-
-							{/* Last Seen Info */}
-							<TimestampDisplay timestamp={nicknameData.last_seen_at} />
-						</CardContent>
-					</Card>
+					{/* Device Info Card with Refresh */}
+					<NicknameStatusCard initialData={nicknameData} />
 
 					{/* Subscription Card */}
 					<Card>
