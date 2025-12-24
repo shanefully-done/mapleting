@@ -138,6 +138,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.batteryOptimizationEnabled.observe(this) { enabled ->
             enabled?.let { updateBatteryOptimizationUI(it) }
         }
+        
+        viewModel.monitoringUrl.observe(this) { url ->
+            updateMonitoringUrlUI(url)
+        }
     }
     
     private fun updateUIWithConfig(config: MonitorConfig?) {
@@ -169,6 +173,18 @@ class MainActivity : AppCompatActivity() {
             binding.packageNameEditText.isEnabled = true
             binding.serverUrlEditText.isEnabled = true
             binding.advancedConfigHeader.isEnabled = true
+        }
+    }
+    
+    /**
+     * Update the monitoring URL display
+     */
+    private fun updateMonitoringUrlUI(url: String?) {
+        if (url != null) {
+            binding.monitoringUrlTextView.text = url
+            binding.monitoringUrlContainer.visibility = View.VISIBLE
+        } else {
+            binding.monitoringUrlContainer.visibility = View.GONE
         }
     }
     
@@ -280,7 +296,8 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
         
-        viewModel.setMonitoringState(MonitoringState.Monitoring)
+        // Pass config to ensure URL is updated immediately
+        viewModel.setMonitoringState(MonitoringState.Monitoring, config)
         Toast.makeText(this, "Monitoring started", Toast.LENGTH_SHORT).show()
     }
     

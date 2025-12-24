@@ -10,6 +10,7 @@ import com.mapleting.monitor.data.ConfigValidation
 import com.mapleting.monitor.data.LogEntry
 import com.mapleting.monitor.data.LogManager
 import com.mapleting.monitor.data.MonitorConfig
+import com.mapleting.monitor.utils.UrlUtils
 import kotlinx.coroutines.launch
 
 /**
@@ -29,6 +30,9 @@ class MonitoringViewModel(application: Application) : AndroidViewModel(applicati
     private val _batteryOptimizationEnabled = MutableLiveData<Boolean?>(null)
     val batteryOptimizationEnabled: LiveData<Boolean?> = _batteryOptimizationEnabled
     
+    private val _monitoringUrl = MutableLiveData<String?>(null)
+    val monitoringUrl: LiveData<String?> = _monitoringUrl
+    
     // Expose logs from LogManager
     val logs: LiveData<List<LogEntry>> = LogManager.logs
     
@@ -47,6 +51,18 @@ class MonitoringViewModel(application: Application) : AndroidViewModel(applicati
     }
     
     /**
+     * Update the monitoring URL based on current config
+     */
+    private fun updateMonitoringUrl(config: MonitorConfig?) {
+        val url = if (config != null) {
+            UrlUtils.buildNicknameUrl(config.nickname, config.serverUrl)
+        } else {
+            null
+        }
+        _monitoringUrl.postValue(url)
+    }
+    
+    /**
      * Save configuration
      */
     fun saveConfig(config: MonitorConfig, onSuccess: () -> Unit, onError: (String) -> Unit) {
@@ -57,6 +73,7 @@ class MonitoringViewModel(application: Application) : AndroidViewModel(applicati
                 is ConfigValidation.Valid -> {
                     configRepository.saveConfig(config)
                     _config.postValue(config)
+                    updateMonitoringUrl(config)
                     onSuccess()
                 }
                 is ConfigValidation.Error -> {
@@ -79,8 +96,15 @@ class MonitoringViewModel(application: Application) : AndroidViewModel(applicati
     /**
      * Update monitoring state
      */
-    fun setMonitoringState(state: MonitoringState) {
+    fun setMonitoringState(state: MonitoringState, config: MonitorConfig? = null) {
         _monitoringState.postValue(state)
+        
+        // Update URL when monitoring starts
+        if (state is MonitoringState.Monitoring) {
+            // Use provided config or fall back to current config
+            val configToUse = config ?: _config.value
+            configToUse?.let { updateMonitoringUrl(it) }
+        }
     }
     
     /**

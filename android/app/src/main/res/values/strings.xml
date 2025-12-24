@@ -12,6 +12,9 @@
     <string name="status_stopped">● Stopped</string>
     <string name="status_monitoring">● Monitoring</string>
     
+    <!-- Monitoring URL -->
+    <string name="monitoring_url_label">Monitoring URL:</string>
+    
     <!-- Buttons -->
     <string name="start_monitoring">Start Monitoring</string>
     <string name="stop_monitoring">Stop Monitoring</string>

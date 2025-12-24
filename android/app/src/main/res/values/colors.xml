@@ -29,6 +29,9 @@
     <color name="status_running">#FF2E7D32</color>
     <color name="status_stopped">#FFC62828</color>
     
+    <!-- Link color -->
+    <color name="link_blue">#FF2196F3</color>
+    
     <!-- Legacy aliases for compatibility -->
     <color name="purple_200">#FFE0E0E0</color>
     <color name="purple_500">#FF2C2C2C</color>

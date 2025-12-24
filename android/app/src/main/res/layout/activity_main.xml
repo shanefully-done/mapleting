@@ -150,6 +150,37 @@
             android:gravity="center"
             android:layout_marginBottom="16dp" />
 
+        <!-- Monitoring URL Display -->
+        <LinearLayout
+            android:id="@+id/monitoringUrlContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/monitoring_url_label"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/monitoringUrlTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/link_blue"
+                android:autoLink="web"
+                android:textIsSelectable="true"
+                android:padding="12dp"
+                android:background="@android:drawable/editbox_background"
+                android:fontFamily="monospace" />
+
+        </LinearLayout>
+
         <!-- Start/Stop Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/startStopButton"
