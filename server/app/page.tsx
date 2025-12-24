@@ -15,6 +15,7 @@ import { encodeNicknameForUrl } from "@/lib/url-utils";
 import { Bell, BookOpen, ArrowRight, Github, Globe } from "lucide-react";
 import { PWAInstallBanner } from "@/components/pwa-install-button";
 import { ErrorAlertWithSuspense } from "@/components/error-alert";
+import { RecentNicknamesList } from "@/components/recent-nicknames-list";
 import Link from "next/link";
 
 export default function Home() {
@@ -103,6 +104,9 @@ export default function Home() {
 							</div>
 						</CardContent>
 					</Card>
+
+					{/* Recent Nicknames */}
+					<RecentNicknamesList />
 
 					{/* Setup Guide CTA */}
 					<Card className="border-primary/20 bg-primary/5">

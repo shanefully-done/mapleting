@@ -4,6 +4,7 @@ import { createClient } from "@/lib/db";
 import { SubscriptionButton } from "@/components/subscription-button";
 import { PWAInstallBanner } from "@/components/pwa-install-button";
 import { TimestampDisplay } from "@/components/timestamp-display";
+import { RecentNicknameTracker } from "@/components/recent-nickname-tracker";
 import {
 	Card,
 	CardContent,
@@ -160,6 +161,12 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+			{/* Track this nickname visit in recent history */}
+			<RecentNicknameTracker
+				encodedNickname={encodedNickname}
+				decodedNickname={nickname}
+			/>
+
 			{/* Header */}
 			<header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 				<div className="container mx-auto px-4 py-6">
