@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">메이플팅 모니터</string>
+    
+    <!-- Configuration -->
+    <string name="configuration">설정</string>
+    <string name="character_name_hint">캐릭터 이름 (닉네임)</string>
+    <string name="advanced_config">고급 설정</string>
+    <string name="package_name_hint_optional">패키지 이름 (기본값: com.nexon.ma)</string>
+    <string name="server_url_hint_optional">서버 URL (기본값: https://mapleting.vercel.app)</string>
+    
+    <!-- Status -->
+    <string name="status_stopped">● 중지됨</string>
+    <string name="status_monitoring">● 모니터링 중</string>
+    
+    <!-- Buttons -->
+    <string name="start_monitoring">모니터링 시작</string>
+    <string name="stop_monitoring">모니터링 중지</string>
+    <string name="open_battery_settings">⚙️ 배터리 최적화</string>
+    <string name="open_accessibility_settings">♿ 접근성 서비스</string>
+    
+    <!-- Battery Optimization -->
+    <string name="battery_optimization_checking">배터리 최적화 확인 중…</string>
+    <string name="battery_optimization_disabled">배터리 최적화: 비활성화됨 ✓</string>
+    <string name="battery_optimization_enabled">배터리 최적화: 활성화됨 (모니터링이 중지될 수 있음)</string>
+    
+    <!-- Accessibility Permission -->
+    <string name="accessibility_permission_checking">접근성 권한 확인 중…</string>
+    <string name="accessibility_permission_status">접근성 서비스: %s</string>
+    <string name="accessibility_enabled">활성화됨 ✓</string>
+    <string name="accessibility_disabled">비활성화됨 (활성화된 앱 감지에 필요)</string>
+    <string name="accessibility_service_description">모니터링되는 앱이 활성화된 앱에서 벗어나는지 감지하기 위해 모니터링합니다. 사용자의 데이터는 수집되거나 전송되지 않습니다.</string>
+    
+    <!-- Errors -->
+    <string name="error_invalid_config">잘못된 설정입니다. 모든 필드를 확인해주세요.</string>
+    <string name="error_network">네트워크 오류입니다. 연결을 확인해주세요.</string>
+    <string name="error_permission_denied">권한이 거부되었습니다. 필요한 권한을 허용해주세요.</string>
+    
+    <!-- Service -->
+    <string name="service_channel_name">모니터링 서비스</string>
+    <string name="service_channel_description">모니터링 서비스를 위한 지속적인 알림</string>
+    <string name="notification_running">실행 중</string>
+    <string name="notification_stopped">중지됨</string>
+    <string name="notification_last_heartbeat">마지막 하트비트: %s</string>
+</resources>

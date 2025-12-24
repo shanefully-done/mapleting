@@ -359,7 +359,7 @@ class MonitoringService : Service() {
         )
         
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Mapleting Monitor")
+            .setContentTitle("MapleTing Monitor")
             .setContentText(contentText)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
