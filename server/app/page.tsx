@@ -67,11 +67,10 @@ export default function Home() {
 					{/* Hero Section */}
 					<div className="text-center space-y-4">
 						<h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
-							아 또 팅겻내
+							아 또 팅겻내! 아 킹받내!
 						</h2>
 						<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-							블루스택, LD, 뮤뮤, Nox 등의 에뮬레이터로 돌리는 메키가 닫히면 푸쉬
-							알림을 보내드립니다.
+							안드로이드 및 에뮬레이터에서 메키가 꺼지면 푸쉬 알림을 보내드립니다.
 						</p>
 					</div>
 
@@ -115,8 +114,8 @@ export default function Home() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-sm text-muted-foreground mb-4">
-								메이플팅은 안드로이드 모니터링 앱과 함께 작동합니다.
-								앱 설치 및 설정 방법을 확인하세요.
+								메이플팅은 안드로이드 모니터링 앱과 함께 작동합니다. 앱 설치 및 설정
+								방법을 확인하세요.
 							</p>
 							<Link href="/setup">
 								<Button className="w-full sm:w-auto gap-2">
@@ -136,8 +135,8 @@ export default function Home() {
 						<CardContent className="space-y-4">
 							<ol className="list-decimal list-inside space-y-2 text-sm">
 								<li>
-									<strong>설정 가이드 확인</strong> - 모니터링 클라이언트를
-									설치하고 설정하세요
+									<strong>설정 가이드 확인</strong> - 모니터링 클라이언트를 설치하고
+									설정하세요
 								</li>
 								<li>
 									<strong>캐릭터 닉네임 입력</strong> - 위 입력창에 캐릭터 닉네임을

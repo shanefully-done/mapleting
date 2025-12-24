@@ -474,8 +474,8 @@ export default function SetupPage() {
 							</ol>
 							<div className="pt-2 border-t">
 								<p className="text-xs text-muted-foreground">
-									<strong>💡 참고</strong> 모바일에서는 앱으로 설치해야 브라우저가 꺼져
-									있거나 백그라운드 상태에서도 알림을 받을 수 있습니다.
+									<strong>💡 참고</strong> 일부 모바일 기기에서는 웹앱으로 설치해야
+									브라우저가 꺼져 있거나 백그라운드 상태에서도 알림을 받을 수 있습니다.
 								</p>
 							</div>
 						</CardContent>
