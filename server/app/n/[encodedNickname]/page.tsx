@@ -156,8 +156,6 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 		);
 	}
 
-	const isConnected = nicknameData.last_status === "connected";
-
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
 			{/* Track this nickname visit in recent history */}

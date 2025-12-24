@@ -4,8 +4,58 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, Clock } from "lucide-react";
 import { TimestampDisplay } from "@/components/timestamp-display";
+
+interface UptimeDisplayProps {
+	timestamp: number;
+}
+
+function UptimeDisplay({ timestamp }: UptimeDisplayProps) {
+	const [uptime, setUptime] = useState({
+		days: 0,
+		hours: 0,
+		minutes: 0,
+		seconds: 0,
+	});
+
+	useEffect(() => {
+		const calculateUptime = () => {
+			const now = Date.now();
+			const diff = now - timestamp;
+
+			const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+			const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+			setUptime({ days, hours, minutes, seconds });
+		};
+
+		calculateUptime();
+		const interval = setInterval(calculateUptime, 1000);
+
+		return () => clearInterval(interval);
+	}, [timestamp]);
+
+	const formatUptime = () => {
+		const parts = [];
+		if (uptime.days > 0) parts.push(`${uptime.days}일`);
+		if (uptime.hours > 0) parts.push(`${uptime.hours}시간`);
+		if (uptime.minutes > 0) parts.push(`${uptime.minutes}분`);
+		parts.push(`${uptime.seconds}초`);
+		return parts.join(" ");
+	};
+
+	return (
+		<div className="flex items-center gap-2 text-sm text-muted-foreground">
+			<Clock className="h-4 w-4" />
+			<span>
+				경과 시간: {formatUptime()}
+			</span>
+		</div>
+	);
+}
 
 interface NicknameData {
 	nickname: string;
@@ -130,6 +180,9 @@ export function NicknameStatusCard({ initialData }: NicknameStatusCardProps) {
 						)}
 					</p>
 				</div>
+
+				{/* Uptime Tracker */}
+				<UptimeDisplay timestamp={data.last_seen_at} />
 
 				{/* Last Seen Info */}
 				<TimestampDisplay timestamp={data.last_seen_at} />
