@@ -2,16 +2,38 @@
 
 ## Technologies
 
-### Client (Python Agent)
+### Client Options
+
+The project supports two monitoring approaches:
+
+#### Option 1: Python Agent (Technical Users)
 
 - **Python**: 3.x (stdlib only - no external dependencies for core functionality)
 - **ADB**: Android Debug Bridge for app status detection
 - **PyInstaller**: For building standalone executables
 - **Standard Library**:
   - `subprocess` - Process execution (ADB commands)
-  - `urllib` - HTTP requests (future: sending heartbeats)
+  - `urllib` - HTTP requests (sending heartbeats)
   - `json` - Configuration file parsing
   - `time` - Sleep intervals between checks
+
+#### Option 2: Android Native App (Non-Technical Users)
+
+- **Language**: Kotlin 100%
+- **Min SDK**: API 24 (Android 7.0 Nougat)
+- **Target SDK**: API 34 (Android 14)
+- **Architecture**: MVVM with Coroutines
+- **Key Libraries**:
+  - OkHttp 4.12.0 - HTTP client for heartbeats
+  - DataStore 1.0.0 - Configuration persistence
+  - Kotlin Coroutines 1.7.3 - Asynchronous operations
+  - Gson 2.10.1 - JSON parsing
+  - Material Design Components - UI
+- **Key Features**:
+  - ForegroundService for background monitoring
+  - ActivityManager/PackageManager for app detection
+  - Persistent notification showing monitoring status
+  - Battery optimization handling
 
 ### Server (Next.js PWA)
 
@@ -27,7 +49,7 @@
   - Web Push API
   - VAPID keys for push authentication
 
-### Frontend
+### Frontend (PWA)
 
 - **React**: Next.js 15 App Router with Server Components
 - **Styling**: CSS Modules or Tailwind CSS
@@ -43,6 +65,13 @@
 - Python 3.8+
 - ADB (Android Platform Tools)
 - Android device/emulator with USB debugging enabled
+
+#### For Android App Development
+
+- Android Studio (latest version)
+- JDK 8 or higher
+- Android SDK (API 24-34)
+- Android device/emulator for testing
 
 #### For Next.js Server Development
 
@@ -84,13 +113,23 @@ NODE_ENV="development"
 
 ### Installation
 
-#### Client Setup
+#### Python Client Setup
 
 ```bash
 cd client
 # No dependencies to install (stdlib only)
 # Build executable:
 pyinstaller --onefile mapleting.py
+```
+
+#### Android App Setup
+
+```bash
+cd android
+# Open in Android Studio
+# Sync Gradle files
+# Run on device/emulator:
+./gradlew installDebug
 ```
 
 #### Server Setup
@@ -115,6 +154,17 @@ bun dev
 - **Standalone executable**: Must be buildable with PyInstaller
 - **Unicode support**: All text handling must support UTF-8
 
+### Android App
+
+- **Must send identical heartbeat format**: Exact same JSON as Python client
+- **UTF-8 encoding**: Full Unicode support for nicknames
+- **Background operation**: Must survive app backgrounding and screen-off
+- **Battery optimization**: Must handle system battery optimization
+- **Min SDK 24**: Support Android 7.0+ (99%+ of active devices)
+- **Foreground service**: Persistent notification required
+- **Network resilience**: Graceful retry logic for failures
+- **No logging secrets**: Never log secret keys in plain text
+
 ### Next.js Server
 
 - **UTF-8 everywhere**: No ASCII assumptions in any component
@@ -123,7 +173,7 @@ bun dev
 - **Push delivery**: Must handle expired endpoints gracefully
 - **Unicode in URLs**: Must encode/decode nicknames properly
 
-### PWA
+### PWA (Web)
 
 - **Service Worker**: Must work on Safari (strictest requirements)
 - **Background sync**: Notifications must arrive when app is closed
@@ -233,6 +283,15 @@ function checkRateLimit(nicknameId: string): boolean {
 - **Integration tests**: Test against local Next.js server
 - **Unicode tests**: Test with Korean, Japanese, Chinese nicknames
 
+### Android App Tests
+
+- **Unit tests**: App status detection, network client, configuration validation
+- **Integration tests**: End-to-end monitoring flow, heartbeat delivery
+- **UI tests**: Configuration flow, service start/stop
+- **Unicode tests**: Test with Korean, Japanese, Chinese nicknames
+- **Device testing**: Android 7.0 through Android 14
+- **Battery optimization**: Test with/without optimization disabled
+
 ### Server Tests
 
 - **API tests**: Test all endpoints with valid/invalid data
@@ -248,11 +307,19 @@ function checkRateLimit(nicknameId: string): boolean {
 
 ## Deployment
 
-### Client Deployment
+### Python Client Deployment
 
 - **Standalone executable**: Distribute `monitor` binary
 - **Configuration template**: Provide `config.json.example`
 - **Documentation**: Clear setup instructions for ADB
+
+### Android App Deployment
+
+- **APK distribution**: For testing and direct distribution
+- **Google Play Store**: Main distribution channel
+- **F-Droid**: Alternative open-source distribution
+- **Release notes**: Include version, features, requirements
+- **Privacy policy**: Required for Play Store
 
 ### Server Deployment
 
@@ -325,6 +392,11 @@ function checkRateLimit(nicknameId: string): boolean {
 - **Analytics**: Charts showing uptime/downtime
 - **Multi-device monitoring**: One nickname, multiple devices
 - **Custom notification rules**: Different alerts for different states
+- **Android app enhancements**:
+  - Multiple app monitoring
+  - Custom check intervals
+  - Notification history on device
+  - QR code configuration
 
 ### Technical Improvements
 
@@ -332,3 +404,7 @@ function checkRateLimit(nicknameId: string): boolean {
 - **Supabase Realtime**: For live updates (optional)
 - **Message queue**: For reliable push delivery
 - **Connection pooling**: Supabase handles pooling automatically
+- **Android app improvements**:
+  - WorkManager for scheduled tasks
+  - Backup/restore configuration
+  - Export logs for debugging

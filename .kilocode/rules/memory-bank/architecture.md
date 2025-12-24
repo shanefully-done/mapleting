@@ -2,29 +2,47 @@
 
 ## System Overview
 
-The monitoring and notification system follows a three-tier architecture:
+The monitoring and notification system follows a three-tier architecture with multiple client options:
 
-1. **Client Agent** (Python) - Monitors Android applications via ADB
+1. **Client Agent** (Python or Android) - Monitors Android applications via ADB or native APIs
 2. **API Server** (Next.js) - Receives heartbeats, manages subscriptions, delivers push notifications
 3. **PWA Frontend** (Next.js) - User interface for subscription management and notification display
+
+### Client Options
+
+The system supports two client approaches:
+- **Python Client**: Cross-platform monitoring via ADB (requires ADB setup)
+- **Android App**: Native monitoring directly on Android device (no ADB required, simpler for non-technical users)
 
 ## Component Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Python Client Agent                      │
-│                         [client/mapleting.py]                      │
+│                    Client Options (Choose One)                  │
 ├─────────────────────────────────────────────────────────────────┤
-│  - ADB Interface: Checks app status via `adb shell ps`          │
-│  - State Machine: Tracks running → stopped transitions          │
-│  - HTTP Client: POSTs heartbeats to Next.js server              │
-│  - Config: JSON-based (nickname, package, secret, interval)     │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           Python Client Agent (Technical Users)          │   │
+│  │           [client/mapleting.py]                          │   │
+│  │  - ADB Interface: Checks app status via `adb shell ps`  │   │
+│  │  - State Machine: Tracks running → stopped transitions  │   │
+│  │  - HTTP Client: POSTs heartbeats to Next.js server      │   │
+│  │  - Config: JSON-based (nickname, package, secret)       │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                          OR                                     │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │           Android App (Non-Technical Users)              │   │
+│  │           [android/app/]                                 │   │
+│  │  - Native APIs: ActivityManager/PackageManager           │   │
+│  │  - ForegroundService: Background monitoring              │   │
+│  │  - HTTP Client: OkHttp for heartbeats                   │   │
+│  │  - Config: DataStore (nickname, package, secret)        │   │
+│  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              │ HTTPS POST
-                              │ /api/heartbeat
-                              │ Authorization: Bearer <secret>
-                              ↓
+                               │
+                               │ HTTPS POST
+                               │ /api/heartbeat
+                               │ Authorization: Bearer <secret>
+                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Next.js API Server                          │
 │                      [server/app/api/]                          │
@@ -132,7 +150,7 @@ interface PushSubscription {
 
 ### POST /api/heartbeat
 
-**From**: Python client agent  
+**From**: Python client agent OR Android app
 **Purpose**: Report application status
 
 **Request Headers:**
@@ -253,7 +271,7 @@ const nickname = new TextDecoder().decode(base64urlDecode(encoded));
 ## Push Notification Flow
 
 ```
-1. Python Client detects: running → stopped
+1. Python Client OR Android App detects: running → stopped
    ↓
 2. POST /api/heartbeat with status="disconnected"
    ↓
@@ -413,7 +431,17 @@ mapleting/
 │   ├── mapleting.py                   # Main monitoring script
 │   ├── config.json                  # Client configuration
 │
-├── server/                          # Next.js PWA (to be implemented)
+├── android/                         # Android monitoring app (future)
+│   ├── app/
+│   │   ├── src/main/
+│   │   │   ├── java/com/mapleting/monitor/
+│   │   │   │   ├── MainActivity.kt
+│   │   │   │   ├── MonitoringService.kt
+│   │   │   │   ├── AppStatusDetector.kt
+│   │   │   │   └── NetworkClient.kt
+│   │   └── build.gradle.kts
+│
+├── server/                          # Next.js PWA
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── heartbeat/
@@ -465,6 +493,15 @@ mapleting/
 - Simpler than full user authentication
 - Sufficient for server-to-server auth
 - Easy to migrate from Telegram bot tokens
+- Works identically for Python and Android clients
+
+### Why Add Android App?
+
+- **No ADB required**: Runs directly on target device
+- **Simpler for non-technical users**: No complex setup
+- **Better reliability**: Native APIs more robust than ADB
+- **Same API contract**: Identical heartbeat format as Python client
+- **Wider accessibility**: Enables monitoring for users without technical skills
 
 ### Why Next.js?
 

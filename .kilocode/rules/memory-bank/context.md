@@ -2,7 +2,11 @@
 
 ## Current Work Focus
 
-The project is in the **architecture and specification phase**. We are analyzing the existing Telegram-based Python monitoring client and designing a comprehensive Next.js PWA solution to replace Telegram notifications with cross-platform web push notifications.
+The project is in the **architecture and specification phase**. We have completed the Next.js PWA server implementation and are now designing a native Android app to provide an alternative to the Python client for non-technical users who find ADB setup too complex.
+
+**Two Client Options**:
+1. **Python Client with ADB**: For technical users comfortable with command-line tools
+2. **Android Native App**: For non-technical users requiring simple, no-setup monitoring
 
 ## Project Status
 
@@ -15,16 +19,18 @@ The project is in the **architecture and specification phase**. We are analyzing
 
 ### In Progress
 
-- 🔄 Designing Next.js PWA server architecture
-- 🔄 Defining API contracts between Python client and Next.js server
-- 🔄 Planning migration strategy from Telegram to Web Push
+- 🔄 Designing Android app architecture and specification
+- 🔄 Planning Android app integration with existing Next.js server
+- 🔄 Documenting Android app requirements and technical constraints
 
 ### Next Steps
 
-1. Test PWA install button on different browsers (Chrome, Safari, Firefox)
-2. Verify install prompt appears correctly on iOS devices with new visual prompts
-3. Test that button hides when app is installed
-4. Consider adding PWA install button to header for more visibility
+1. Implement Android app based on specification
+2. Test Android app on various Android versions (7.0 - 14)
+3. Verify heartbeat format matches Python client exactly
+4. Test UTF-8 support for non-English nicknames
+5. Test battery optimization handling
+6. Test background service reliability
 
 ## Recent Changes
 
@@ -58,25 +64,37 @@ The Python client will be modified to:
 
 ## Architecture Overview
 
-The system consists of three main components:
+The system consists of multiple components:
 
-1. **Python Client Agent** ([`client/`](client/))
+### Monitoring Options (Choose One)
+
+1. **Python Client Agent** ([`client/`](client/)) - Technical Users
 
    - Monitors Android app status via ADB
    - Sends heartbeat updates to server
    - Stateless, minimal dependencies
+   - Cross-platform (Windows, macOS, Linux)
 
-2. **Next.js Server** (to be implemented in [`server/`](server/))
+2. **Android Native App** ([`android/`](android/)) - Non-Technical Users (To Be Implemented)
 
-   - Receives heartbeat from Python clients
+   - Monitors Android app status via native APIs
+   - Runs directly on target device
+   - No ADB setup required
+   - Simple, intuitive UI
+
+### Server & Frontend
+
+3. **Next.js Server** ([`server/`](server/)) - Implemented
+
+   - Receives heartbeat from Python clients or Android apps
    - Manages nickname entities and subscriptions
    - Sends push notifications via Web Push API
 
-3. **PWA Frontend** (to be implemented in [`server/`](server/))
+4. **PWA Frontend** ([`server/`](server/)) - Implemented
+
    - Users subscribe to nicknames
    - Receives push notifications
    - Displays device status
-
 ## Key Technical Decisions
 
 - **UTF-8 First**: All text (especially nicknames) treated as UTF-8 throughout
@@ -87,26 +105,27 @@ The system consists of three main components:
 ## Data Flow
 
 ```
-┌─────────────────┐
-│  Python Client  │
-│  (ADB Monitor)  │
-└────────┬────────┘
-         │ heartbeat (POST /api/heartbeat)
-         │ Authorization: Bearer <secret>
-         ↓
+┌─────────────────────────┐
+│  Python Client OR       │
+│  Android App            │
+│  (ADB or Native APIs)   │
+└──────────┬──────────────┘
+           │ heartbeat (POST /api/heartbeat)
+           │ Authorization: Bearer <secret>
+           ↓
 ┌─────────────────┐
 │  Next.js API    │
 │  /api/heartbeat │
 └────────┬────────┘
-         │ State transition detected
-         │ connected → disconnected
-         ↓
+          │ State transition detected
+          │ connected → disconnected
+          ↓
 ┌─────────────────┐
 │  Push Service   │
 │  (web-push)     │
 └────────┬────────┘
-         │ Push notification
-         ↓
+          │ Push notification
+          ↓
 ┌─────────────────┐
 │  User Devices   │
 │  (PWA/Browser)  │
@@ -115,14 +134,18 @@ The system consists of three main components:
 
 ## Development Environment
 
-- **Client**: Python 3.x with ADB tools
+- **Python Client**: Python 3.x with ADB tools
+- **Android App**: Android Studio with Kotlin
 - **Server**: Node.js with Next.js 15
 - **Testing**: Android device/emulator with target app
-- **Deployment**: Self-hosted or cloud platform
+- **Deployment**: Self-hosted or cloud platform (Vercel)
 
 ## Important Notes
 
-- The server directory (`server/`) is currently empty and needs to be initialized
-- The Python client is fully functional and will be modified for the new API
-- All non-English nickname handling must be tested end-to-end
-- Service worker must work across all target platforms
+- The Next.js server has been implemented and is functional
+- The PWA frontend is complete with push notification support
+- The Python client is fully functional with heartbeat API integration
+- Android app specification is complete, implementation pending
+- All non-English nickname handling must be tested end-to-end for both clients
+- Android app must send identical heartbeat format as Python client
+- Service worker works across all target platforms
