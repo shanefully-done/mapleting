@@ -87,7 +87,11 @@ class MonitoringService : Service() {
         "com.vivo.systemui",
         "com.vivo.permissionmanager",
         "com.bluestacks.settings",
-        "com.android.emulator.smartsystem"
+        "com.android.emulator.smartsystem",
+        "autoclicker.clicker.autoclickerapp.autoclickerforgames",
+        "com.truedevelopersstudio.automatictap.autoclicker",
+        "com.tapassistant.autoclicker",
+        "com.speed.gc.autoclicker.automatictap"
     )
     
     // BroadcastReceiver for foreground app changes from AccessibilityService
