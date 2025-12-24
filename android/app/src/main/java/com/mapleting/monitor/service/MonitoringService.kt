@@ -207,8 +207,6 @@ class MonitoringService : Service() {
                 message = "❌ $targetPackage left foreground → Queued: $newStatus",
                 type = LogType.WARNING
             ))
-            
-            updateNotification(false)
         } else if (currentPackage == targetPackage && lastForegroundPackage != targetPackage) {
             // Target entered foreground
             queuedStatus = newStatus  // Queue it
@@ -219,8 +217,6 @@ class MonitoringService : Service() {
                 message = "✅ $targetPackage entered foreground → Queued: $newStatus",
                 type = LogType.SUCCESS
             ))
-            
-            updateNotification(true)
         }
         
         lastForegroundPackage = currentPackage
