@@ -115,8 +115,8 @@ export default function Home() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-sm text-muted-foreground mb-4">
-								메이플팅은 PC에서 실행되는 모니터링 클라이언트와 함께 작동합니다.
-								ADB 설정 및 클라이언트 설치 방법을 확인하세요.
+								메이플팅은 안드로이드 모니터링 앱과 함께 작동합니다.
+								앱 설치 및 설정 방법을 확인하세요.
 							</p>
 							<Link href="/setup">
 								<Button className="w-full sm:w-auto gap-2">

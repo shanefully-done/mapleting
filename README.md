@@ -22,7 +22,7 @@ MapleTing is a comprehensive monitoring and notification system that enables rea
 - **🔔 Native Notifications**: OS-integrated push that work even when browser/app is closed
 - **🌐 Unicode-First**: Full UTF-8 support for non-English alias (Korean, Japanese, Chinese, etc.)
 - **📦 PWA Installable**: Install as native app on any supported platform
-- **🪶 Lightweight Monitor Client**: Python agent uses only standard library
+- **📱 Native Android Monitoring App**: Kotlin-based app with AccessibilityService
 
 ---
 
@@ -40,8 +40,7 @@ MapleTing is a comprehensive monitoring and notification system that enables rea
 ### Prerequisites
 
 - **Server**: Node.js 18.17+, Bun package manager, Supabase account
-- **Client**: Python 3.8+, ADB (Android Debug Bridge)
-- **Android Device**: USB debugging enabled
+- **Client**: Android device or emulator (Android 7.0+)
 
 ### 1. Deploy the Server
 
@@ -63,57 +62,38 @@ cp .env.example .env.local
 bun dev
 ```
 
-### 2. Set Up the Python Client
+### 2. Install the Android App
 
 ```bash
-# Navigate to client directory
-cd client
+# Download APK from GitHub Releases
+# Latest release: https://github.com/yourusername/mapleting/releases
 
-# Run the setup wizard (creates mapleting_config.json)
-python mapleting.py
+# Install on Android device
+adb install mapleting-monitor.apk
+# Or transfer APK to device and install directly
 ```
 
-**The setup wizard will prompt you for:**
+**App Configuration:**
 
-- 캐릭터/플레이어 이름 (Character/Player name)
-- 서버 주소 (Server URL)
-- 패키지 이름 (Package name)
-- 체크 간격 (Check interval)
+1. Open the Mapleting Monitor app
+2. Configure your monitoring settings:
+   - **Nickname**: Your device name (supports UTF-8: 한국어, 日本語, 中文)
+   - **Secret**: Your unique authentication key
+   - **Package Name**: Android app to monitor (e.g., com.nexon.ma)
+   - **Server URL**: Next.js server address (pre-configured)
 
-**Important:** After setup, the wizard will generate a unique secret key. You must register this nickname and secret with your server administrator to receive notifications.
+3. Enable Accessibility Service:
+   - Go to Settings → Accessibility → Mapleting Monitor
+   - Enable the service to allow app state detection
 
-**Configuration file (`mapleting_config.json`) is auto-generated:**
+4. Start Monitoring:
+   - Tap "Start Monitoring" button
+   - Grant necessary permissions when prompted
+   - Disable battery optimization for reliable background operation
 
-```json
-{
-	"server_url": "https://mapleting.vercel.app",
-	"nickname": "내_게임_닉네임",
-	"package_name": "com.nexon.ma",
-	"check_interval_seconds": 60
-}
-```
+**Important:** You must register your nickname and secret with your server administrator before starting monitoring.
 
-### 3. Start Monitoring
-
-```bash
-# Verify ADB connection
-adb devices
-
-# Run mapleting (will start monitoring automatically)
-python mapleting.py
-```
-
-### 4. Build Standalone Executable (Optional)
-
-```bash
-# Build with PyInstaller
-pyinstaller --onefile mapleting.py
-
-# Run the executable
-./mapleting
-```
-
-### 5. Subscribe to Notifications
+### 3. Subscribe to Notifications
 
 1. Open your deployed server URL in a browser
 2. Click "Subscribe" for your device alias
@@ -133,12 +113,19 @@ pyinstaller --onefile mapleting.py
 - **UI**: Tailwind CSS + shadcn/ui components
 - **PWA**: Service Worker + Web Manifest
 
-### Client (Python Agent)
+### Client (Android Native App)
 
-- **Language**: Python 3.8+ (stdlib only)
-- **Monitoring**: ADB (Android Debug Bridge)
-- **Packaging**: PyInstaller for standalone executables (binary name: `mapleting`)
-- **Setup**: Interactive wizard for initial configuration
+- **Language**: Kotlin 100%
+- **Min SDK**: Android 7.0 (API 24)
+- **Target SDK**: Android 14 (API 34)
+- **Architecture**: MVVM with Coroutines
+- **Key Components**:
+  - AccessibilityService for real-time app state detection
+  - ForegroundService for reliable background monitoring
+  - Material Design UI with shadcn-inspired components
+- **Data Storage**: DataStore (modern SharedPreferences)
+- **Networking**: OkHttp for HTTPS heartbeats
+- **Background**: Persistent notification showing monitoring status
 
 ### Infrastructure
 

@@ -26,7 +26,7 @@ export interface PushSubscription {
 }
 
 /**
- * Heartbeat request from Python client
+ * Heartbeat request from Android monitoring client
  */
 export interface HeartbeatRequest {
   nickname: string; // UTF-8 encoded nickname

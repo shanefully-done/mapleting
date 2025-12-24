@@ -6,7 +6,15 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, Download, Settings, Bell } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+	ArrowLeft,
+	BookOpen,
+	Download,
+	Smartphone,
+	AlertCircle,
+	CheckCircle2,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function SetupPage() {
@@ -30,393 +38,403 @@ export default function SetupPage() {
 					{/* Page Title */}
 					<div className="text-center space-y-2">
 						<h1 className="text-3xl font-bold tracking-tight">설정 가이드</h1>
-						<p className="text-muted-foreground">
-							모니터링 클라이언트 설치 및 설정 방법
-						</p>
+						<p className="text-muted-foreground">안드로이드 앱 설치 및 설정 방법</p>
 					</div>
 
 					{/* Quick Overview */}
 					<Card className="border-primary/20 bg-primary/5">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
-								<Bell className="h-5 w-5" />
+								<Smartphone className="h-5 w-5" />
 								메이플팅이란?
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm">
 							<p>
-								메이플팅은 PC에서 실행되는 모니터링 클라이언트와 웹 푸시 알림을 통해,
-								에뮬레이터나 기기에서 메이플스토리가 완전히 튕긴 경우 알림을 받을 수
-								있는 서비스입니다.
+								메이플팅은 안드로이드 앱을 통해 기기에서 메이플스토리가 완전히 튕긴 경우
+								웹 푸시 알림을 받을 수 있는 서비스입니다.
 							</p>
 							<p className="text-muted-foreground">
-								<strong>💡 모니터링 클라이언트란?</strong> PC에서 실행되는 작은
-								프로그램으로, ADB(Android Debug Bridge)를 사용하여 에뮬레이터나 기기에서
-								게임이 실행 중인지 확인하고 서버에 알려줍니다.
+								<strong>💡 특별한 설정이 필요 없습니다!</strong> ADB나 복잡한 프로그램
+								설치 없이, 앱만 설치하면 바로 모니터링을 시작할 수 있습니다. 기기에서
+								직접 게임 상태를 확인하므로 더 정확하고 신뢰성이 높습니다.
 							</p>
 						</CardContent>
 					</Card>
 
-					{/* ADB Setup Instructions */}
+					{/* System Requirements */}
 					<Card className="border-2">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
-								<Settings className="h-5 w-5" />
-								ADB 설정 (필수)
+								<CheckCircle2 className="h-5 w-5 text-green-600" />
+								시스템 요구사항
 							</CardTitle>
-							<CardDescription>
-								모니터링 클라이언트는 ADB를 사용하여 에뮬레이터의 게임 상태를 확인합니다
-							</CardDescription>
+							<CardDescription>앱을 설치하기 전에 확인해주세요</CardDescription>
 						</CardHeader>
-						<CardContent className="space-y-6">
-							{/* Windows ADB Setup */}
-							<div className="space-y-3">
-								<h3 className="font-semibold text-base">1. ADB 설치 (Windows)</h3>
-								<ol className="list-decimal list-inside space-y-3 text-sm">
-									<li className="pl-2">
-										<span className="font-medium">Android Platform Tools 다운로드</span>
-										<div className="mt-1 ml-4 text-muted-foreground">
-											<a
-												href="https://developer.android.com/tools/releases/platform-tools"
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-primary hover:underline"
-											>
-												Google 공식 페이지
-											</a>{" "}
-											에서 Windows용 Platform Tools를 다운로드하세요.
-										</div>
+						<CardContent className="space-y-4 text-sm">
+							<div className="space-y-2">
+								<p className="font-medium">지원 기기</p>
+								<ul className="list-disc list-inside space-y-1 text-muted-foreground ml-2">
+									<li>안드로이드 7.0 (누가) 이상</li>
+									<li>삼성, LG, 샤오미, 화웨이 등 모든 안드로이드 기기</li>
+									<li>에뮬레이터 (LDPlayer, Nox, BlueStacks 등)</li>
+								</ul>
+							</div>
+							<div className="space-y-2">
+								<p className="font-medium">필수 권한</p>
+								<ul className="list-disc list-inside space-y-1 text-muted-foreground ml-2">
+									<li>접근성 권한 (앱 상태 감지)</li>
+									<li>배터리 최적화 해제 (백그라운드 실행)</li>
+									<li>알림 권한 (모니터링 상태 표시)</li>
+								</ul>
+							</div>
+						</CardContent>
+					</Card>
+
+					{/* Step 1: Download APK */}
+					<Card className="border-2">
+						<CardHeader className="bg-primary/5">
+							<CardTitle className="flex items-center gap-2">
+								<div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+									1
+								</div>
+								APK 다운로드
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4 pt-6">
+							<div className="space-y-3 text-sm">
+								<p className="font-medium">GitHub 릴리즈 페이지에서 다운로드</p>
+								<ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
+									<li>아래 버튼을 클릭하여 GitHub 릴리즈 페이지로 이동하세요</li>
+									<li>최신 릴리즈를 찾습니다 (보통 상단에 있습니다)</li>
+									<li>
+										<strong>Assets</strong> 섹션에서{" "}
+										<code className="bg-muted px-1 rounded">app-release.apk</code> 또는
+										유사한 이름의 APK 파일을 찾습니다
 									</li>
-									<li className="pl-2">
-										<span className="font-medium">압축 해제 및 폴더 이동</span>
-										<div className="mt-1 ml-4 text-muted-foreground space-y-1">
-											<p>• 다운로드한 zip 파일을 압축 해제합니다</p>
-											<p>• 폴더를 C:\adb 경로로 이동합니다</p>
-											<p className="text-xs bg-muted p-2 rounded">
-												팁: C:\adb 같이 경로에 공백이 없는 곳을 추천합니다
-											</p>
-										</div>
-									</li>
-									<li className="pl-2">
-										<span className="font-medium">환경 변수 (PATH) 설정</span>
-										<div className="mt-1 ml-4 text-muted-foreground space-y-2">
-											<p>
-												<strong>방법 1: 시스템 설정 (권장)</strong>
-											</p>
-											<ol className="list-[lower-alpha] list-inside ml-4 space-y-1 text-xs">
-												<li>Windows 키 + R → sysdm.cpl 입력 → Enter</li>
-												<li>[고급] 탭 → [환경 변수] 버튼 클릭</li>
-												<li>
-													&ldquo;사용자 변수&rdquo; 또는 &ldquo;시스템 변수&rdquo;에서 Path
-													선택 → [편집]
-												</li>
-												<li>[새로 만들기] → C:\adb 입력 → [확인]</li>
-												<li>모든 창을 닫고 새로운 명령 프롬프트(cmd)를 엽니다</li>
+									<li>APK 파일을 클릭하여 다운로드합니다</li>
+								</ol>
+
+								<div className="pt-4">
+									<Button asChild size="lg" className="w-full sm:w-auto gap-2">
+										<a
+											href="https://github.com/shanefully-done/mapleting/releases"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											<Download className="h-4 w-4" />
+											GitHub 릴리즈 페이지 열기
+										</a>
+									</Button>
+								</div>
+
+								<Alert>
+									<AlertCircle className="h-4 w-4" />
+									<AlertTitle>다운로드가 안 될 때</AlertTitle>
+									<AlertDescription className="text-xs">
+										일부 브라우저에서 APK 다운로드가 차단될 수 있습니다. 다운로드가
+										시작되지 않으면:
+										<ul className="list-disc list-inside mt-1 space-y-1">
+											<li>Chrome: 주소창 왼쪽의 다운로드 차단 아이콘을 클릭하여 허용</li>
+											<li>Safari: 다운로드 목록에서 차단된 항목 확인</li>
+											<li>파이어폭스: 상단 표시줄의 차단 알림 확인</li>
+										</ul>
+									</AlertDescription>
+								</Alert>
+							</div>
+						</CardContent>
+					</Card>
+
+					{/* Step 2: Installation */}
+					<Card className="border-2">
+						<CardHeader className="bg-primary/5">
+							<CardTitle className="flex items-center gap-2">
+								<div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+									2
+								</div>
+								앱 설치
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4 pt-6">
+							<div className="space-y-4 text-sm">
+								<div className="space-y-2">
+									<p className="font-medium">실제 기기에 설치</p>
+									<ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
+										<li>
+											다운로드한 APK 파일을 찾습니다 (보통{" "}
+											<code className="bg-muted px-1 rounded">다운로드</code> 폴더)
+										</li>
+										<li>APK 파일을 탭하여 설치를 시작합니다</li>
+										<li>
+											<strong>알 수 없는 출처 앱 설치</strong> 권한을 허용합니다
+											<div className="bg-muted p-2 rounded text-xs mt-1">
+												설정 → 보안 → 알 수 없는 출처 (허용)
+											</div>
+										</li>
+										<li>
+											설치가 완료되면 <strong>열기</strong> 또는 <strong>완료</strong>를
+											탭합니다
+										</li>
+									</ol>
+								</div>
+
+								<div className="space-y-2">
+									<p className="font-medium">에뮬레이터에 설치</p>
+									<div className="space-y-3">
+										<div className="bg-muted/50 p-3 rounded-lg">
+											<p className="font-medium text-xs">LDPlayer</p>
+											<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground mt-2">
+												<li>APK 파일을 LDPlayer 창으로 드래그 앤 드롭</li>
+												<li>또는 APK 파일을 더블 클릭</li>
 											</ol>
-											<p className="mt-2">
-												<strong>방법 2: PowerShell (일시적)</strong>
-											</p>
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												$env:Path += &ldquo;;C:\adb&rdquo;
-											</div>
-											<p className="text-xs text-muted-foreground mt-1">
-												이 방법은 현재 세션에만 적용됩니다
-											</p>
 										</div>
-									</li>
-									<li className="pl-2">
-										<span className="font-medium">ADB 설치 확인</span>
-										<div className="mt-1 ml-4 text-muted-foreground space-y-1">
-											<p>새로운 명령 프롬프트(cmd) 또는 PowerShell에서:</p>
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												adb version
-											</div>
-											<p className="text-xs">버전 정보가 출력되면 설치 완료입니다</p>
+										<div className="bg-muted/50 p-3 rounded-lg">
+											<p className="font-medium text-xs">NoxPlayer</p>
+											<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground mt-2">
+												<li>APK 파일을 NoxPlayer 창으로 드래그 앤 드롭</li>
+												<li>또는 우클릭 → APK에서 열기</li>
+											</ol>
 										</div>
-									</li>
-								</ol>
-							</div>
-
-							{/* macOS ADB Setup */}
-							<div className="space-y-3">
-								<h3 className="font-semibold text-base">2. ADB 설치 (macOS)</h3>
-								<ol className="list-decimal list-inside space-y-3 text-sm">
-									<li className="pl-2">
-										<span className="font-medium">Homebrew로 설치</span>
-										<div className="mt-1 ml-4 text-muted-foreground space-y-1">
-											<p>터미널에서 다음 명령어를 실행합니다:</p>
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												brew install android-platform-tools
-											</div>
-											<p className="text-xs">
-												Homebrew가 없다면{" "}
-												<a
-													href="https://brew.sh"
-													target="_blank"
-													rel="noopener noreferrer"
-													className="text-primary hover:underline"
-												>
-													brew.sh
-												</a>{" "}
-												에서 먼저 설치하세요
-											</p>
+										<div className="bg-muted/50 p-3 rounded-lg">
+											<p className="font-medium text-xs">BlueStacks</p>
+											<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground mt-2">
+												<li>APK 파일을 BlueStacks 창으로 드래그 앤 드롭</li>
+												<li>또는 설치 APK 버튼 클릭</li>
+											</ol>
 										</div>
-									</li>
-									<li className="pl-2">
-										<span className="font-medium">ADB 설치 확인</span>
-										<div className="mt-1 ml-4 text-muted-foreground">
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												adb version
-											</div>
-										</div>
-									</li>
-								</ol>
-							</div>
-
-							{/* Linux ADB Setup */}
-							<div className="space-y-3">
-								<h3 className="font-semibold text-base">3. ADB 설치 (Linux)</h3>
-								<ol className="list-decimal list-inside space-y-2 text-sm">
-									<li className="pl-2">
-										<span className="font-medium">Ubuntu/Debian:</span>
-										<div className="mt-1 ml-4 text-muted-foreground">
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												sudo apt update && sudo apt install android-tools-adb
-											</div>
-										</div>
-									</li>
-									<li className="pl-2">
-										<span className="font-medium">Fedora:</span>
-										<div className="mt-1 ml-4 text-muted-foreground">
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												sudo dnf install android-tools
-											</div>
-										</div>
-									</li>
-									<li className="pl-2">
-										<span className="font-medium">Arch Linux:</span>
-										<div className="mt-1 ml-4 text-muted-foreground">
-											<div className="bg-muted p-2 rounded text-xs font-mono">
-												sudo pacman -S android-tools
-											</div>
-										</div>
-									</li>
-								</ol>
-							</div>
-
-							<Separator className="my-4" />
-
-							{/* Emulator ADB Setup */}
-							<div className="space-y-3">
-								<h3 className="font-semibold text-base">
-									4. 에뮬레이터에서 ADB 디버깅 활성화
-								</h3>
-
-								{/* Android Studio Emulator */}
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="font-medium text-sm">Android Studio 에뮬레이터</p>
-									<p className="text-xs text-muted-foreground">
-										Android Studio 에뮬레이터는 기본적으로 ADB가 활성화되어 있습니다. 추가
-										설정이 필요하지 않습니다.
-									</p>
-								</div>
-
-								{/* LDPlayer */}
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="font-medium text-sm">LDPlayer</p>
-									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>LDPlayer 설정 (키보드 아이콘 또는 Ctrl + 3) 열기</li>
-										<li>[기타] 탭 선택</li>
-										<li>&ldquo;Android 디버그 브리지(ADB) 활성화&rdquo; 체크</li>
-										<li>에뮬레이터 재시작</li>
-										<li>기본 포트: 5555 (LDPlayer 3/4), 5555 (LDPlayer 9)</li>
-									</ol>
-									<div className="mt-2 bg-background p-2 rounded text-xs font-mono">
-										<p># 연결 확인:</p>
-										<p>adb connect 127.0.0.1:5555</p>
-									</div>
-								</div>
-
-								{/* NoxPlayer */}
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="font-medium text-sm">NoxPlayer</p>
-									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>NoxPlayer 설정 (톱니바퀴 아이콘 또는 Ctrl + 5) 열기</li>
-										<li>[일반] 탭 선택</li>
-										<li>&ldquo;개발자 옵션 활성화&rdquo; 체크</li>
-										<li>에뮬레이터 재시작</li>
-										<li>설정 다시 열기 → [일반] → &ldquo;USB 디버깅&rdquo; 활성화</li>
-										<li>기본 포트: 62001</li>
-									</ol>
-									<div className="mt-2 bg-background p-2 rounded text-xs font-mono">
-										<p># 연결 확인:</p>
-										<p>adb connect 127.0.0.1:62001</p>
-									</div>
-								</div>
-
-								{/* BlueStacks */}
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="font-medium text-sm">BlueStacks 5</p>
-									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>BlueStacks 설정 (톱니바퀴 아이콘) 열기</li>
-										<li>[고대] 탭 선택</li>
-										<li>&ldquo;Android Debug Bridge(ADB) 활성화&rdquo; 체크</li>
-										<li>에뮬레이터 재시작</li>
-										<li>기본 포트: 5555</li>
-									</ol>
-									<div className="mt-2 bg-background p-2 rounded text-xs font-mono">
-										<p># 연결 확인:</p>
-										<p>adb connect 127.0.0.1:5555</p>
-									</div>
-								</div>
-
-								{/* MEmu Play */}
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="font-medium text-sm">MEmu Play</p>
-									<ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
-										<li>MEmu 설정 (오른쪽 사이드바 톱니바퀴 아이콘) 열기</li>
-										<li>[Android 설정] 탭 선택</li>
-										<li>&ldquo;ADB 디버깅&rdquo; 활성화</li>
-										<li>에뮬레이터 재시작</li>
-										<li>기본 포트: 21503</li>
-									</ol>
-									<div className="mt-2 bg-background p-2 rounded text-xs font-mono">
-										<p># 연결 확인:</p>
-										<p>adb connect 127.0.0.1:21503</p>
 									</div>
 								</div>
 							</div>
+						</CardContent>
+					</Card>
 
-							{/* Verify ADB Connection */}
-							<div className="space-y-3">
-								<h3 className="font-semibold text-base">5. ADB 연결 확인</h3>
-								<div className="bg-muted/50 p-4 rounded-lg space-y-2">
-									<p className="text-sm">명령 프롬프트/터미널에서 다음을 실행:</p>
-									<div className="bg-background p-2 rounded text-xs font-mono space-y-1">
-										<p># 에뮬레이터 연결 (필요한 경우):</p>
-										<p>adb connect 127.0.0.1:5555</p>
-										<p className="mt-2"># 연결된 장치 확인:</p>
-										<p>adb devices</p>
-									</div>
-									<p className="text-xs text-muted-foreground">
-										&ldquo;List of devices attached&rdquo; 아래에 장치가 표시되면 연결이
-										성공한 것입니다.
+					{/* Step 3: Permissions */}
+					<Card className="border-2">
+						<CardHeader className="bg-primary/5">
+							<CardTitle className="flex items-center gap-2">
+								<div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+									3
+								</div>
+								권한 설정
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4 pt-6">
+							<div className="space-y-4 text-sm">
+								<div className="space-y-2">
+									<p className="font-medium">접근성 권한 (필수)</p>
+									<ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
+										<li>앱에서 &ldquo;접근성 설정 열기&rdquo; 버튼을 탭합니다</li>
+										<li>
+											<strong>Mapleting Monitor</strong>를 찾아 ON으로 켭니다
+										</li>
+										<li>
+											팝업이 나오면 <strong>허용</strong>을 탭합니다
+										</li>
+										<li>앱으로 돌아와서 권한이 부여되었는지 확인합니다</li>
+									</ol>
+									<Alert>
+										<AlertCircle className="h-4 w-4" />
+										<AlertTitle>접근성 권한이 필요한 이유</AlertTitle>
+										<AlertDescription className="text-xs">
+											앱이 화면에 표시된 내용을 분석하여 특정 앱이 실행 중인지 확인하기
+											위해 필요합니다. 개인정보는 수집하지 않으며 앱 상태 감지 목적으로만
+											사용됩니다.
+										</AlertDescription>
+									</Alert>
+								</div>
+
+								<div className="space-y-2">
+									<p className="font-medium">배터리 최적화 해제 (중요)</p>
+									<ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
+										<li>앱에서 &ldquo;배터리 최적화 설정&rdquo; 버튼을 탭합니다</li>
+										<li>
+											<strong>제한 없음</strong> 또는 <strong>최적화 안 함</strong>을
+											선택합니다
+										</li>
+										<li>앱으로 돌아와서 설정이 적용되었는지 확인합니다</li>
+									</ol>
+									<Alert>
+										<AlertCircle className="h-4 w-4" />
+										<AlertTitle>왜 배터리 최적화를 해제해야 하나요?</AlertTitle>
+										<AlertDescription className="text-xs">
+											안드로이드 시스템은 배터리를 절약하기 위해 백그라운드 앱을 자동으로
+											종료합니다. 모니터링 앱이 계속 실행되도록 하려면 배터리 최적화를
+											해제해야 합니다. 배터리 소모는 매우 적습니다.
+										</AlertDescription>
+									</Alert>
+								</div>
+
+								<div className="space-y-2">
+									<p className="font-medium">알림 권한</p>
+									<p className="text-muted-foreground ml-2">
+										앱이 모니터링 상태를 표시하기 위해 알림 권한이 필요합니다. 첫 실행 시
+										알림 권한을 허용해 주세요.
 									</p>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
 
-					{/* Monitoring Client Setup */}
+					{/* Step 4: Configuration */}
 					<Card className="border-2">
-						<CardHeader>
+						<CardHeader className="bg-primary/5">
 							<CardTitle className="flex items-center gap-2">
-								<Download className="h-5 w-5" />
-								모니터링 클라이언트 설치 및 실행
+								<div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+									4
+								</div>
+								설정
 							</CardTitle>
 						</CardHeader>
-						<CardContent className="space-y-4">
-							<div className="space-y-3 text-sm">
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										1
-									</div>
-									<div>
-										<p className="font-medium">모니터링 클라이언트 다운로드</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											<a
-												href="https://github.com/shanefully-done/mapleting/releases"
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-primary hover:underline"
-											>
-												GitHub 릴리즈 페이지
-											</a>{" "}
-											에서 운영체제에 맞는 클라이언트 프로그램을 다운로드하세요.
+						<CardContent className="space-y-4 pt-6">
+							<div className="space-y-4 text-sm">
+								<div className="space-y-3">
+									<strong>닉네임 설정</strong>
+									<div className="ml-4 mt-1 space-y-1">
+										<p>
+											• 앱을 실행하고 &ldquo;닉네임&rdquo; 필드에 캐릭터명을 입력합니다
 										</p>
-									</div>
-								</div>
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										2
-									</div>
-									<div>
-										<p className="font-medium">클라이언트 실행 및 초기 설정</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											터미널/명령 프롬프트에서 클라이언트 파일이 있는 폴더로 이동 후
-											실행합니다:
+										<p>
+											• 예: <code className="bg-muted px-1 rounded">테스트캐릭터01</code>
 										</p>
-										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono">
-											# Windows:
-											<br />
-											monitor.exe
-											<br />
-											<br />
-											# macOS/Linux:
-											<br />
-											chmod +x monitor
-											<br />
-											./monitor
-										</div>
-										<div className="mt-3 space-y-2 text-xs text-muted-foreground">
-											<p className="font-medium text-foreground">
-												📋 첫 실행 시 자동 설정이 시작됩니다.
-											</p>
-										</div>
-									</div>
-								</div>
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-muted-foreground text-muted-foreground flex items-center justify-center text-xs font-bold">
-										3
-									</div>
-									<div>
-										<p className="font-medium text-muted-foreground">
-											모니터링 시작 확인
-										</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											클라이언트가 정상적으로 실행되면 다음과 같은 메시지가 표시됩니다:
-										</p>
-										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono space-y-1">
-											<p>============================================================</p>
-											<p>✓ 설정 완료! 모니터링을 시작합니다...</p>
-											<p>============================================================</p>
-											<p>🔍 모니터링 시작: 에스프레소 (com.nexon.ma)</p>
-											<p>📱 체크 간격: 60초</p>
-											<p>🌐 서버: https://mapleting.vercel.app</p>
-											<p>중지하려면 Ctrl+C를 누르세요</p>
-										</div>
-										<p className="text-xs text-muted-foreground mt-2">
-											터미널 창을 닫지 말고 계속 실행해 두세요.
-										</p>
-									</div>
-								</div>
-								<div className="flex gap-3">
-									<div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-										3
-									</div>
-									<div>
-										<p className="font-medium">클라이언트 실행</p>
-										<p className="text-muted-foreground text-xs mt-1">
-											터미널/명령 프롬프트에서 클라이언트 파일이 있는 폴더로 이동 후:
-										</p>
-										<div className="mt-2 bg-muted p-2 rounded text-xs font-mono">
-											# Windows:
-											<br />
-											monitor.exe
-											<br />
-											<br />
-											# macOS/Linux:
-											<br />
-											chmod +x monitor
-											<br />
-											./monitor
-										</div>
-										<p className="text-xs text-muted-foreground mt-1">
-											클라이언트가 게임 상태를 감시하기 시작합니다.
-										</p>
+										<p className="text-xs">※ 한글, 영문, 숫자, 일부 특수문자 사용 가능</p>
 									</div>
 								</div>
 							</div>
+						</CardContent>
+					</Card>
+
+					{/* Step 5: Start Monitoring */}
+					<Card className="border-2">
+						<CardHeader className="bg-primary/5">
+							<CardTitle className="flex items-center gap-2">
+								<div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+									5
+								</div>
+								모니터링 시작
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4 pt-6">
+							<div className="space-y-4 text-sm">
+								<div className="space-y-3">
+									<p className="font-medium">모니터링 시작 방법</p>
+									<ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
+										<li>
+											모든 설정이 완료되면 <strong>&ldquo;모니터링 시작&rdquo;</strong>{" "}
+											버튼을 탭합니다
+										</li>
+										<li>
+											상태 표시가 <strong className="text-green-600">● 모니터링 중</strong>
+											으로 변경되면 성공입니다
+										</li>
+										<li>알림창이 계속 표시되며 모니터링 상태를 보여줍니다</li>
+										<li>이제 앱을 백그라운드로 전환해도 모니터링이 계속됩니다</li>
+									</ol>
+								</div>
+
+								<div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+									<p className="font-medium text-green-700 dark:text-green-400 mb-2">
+										✅ 모니터링이 정상 작동하는지 확인하세요
+									</p>
+									<ul className="space-y-1 text-xs text-muted-foreground">
+										<li>• 알림창이 계속 표시되어야 합니다</li>
+										<li>
+											• 알림창에 &ldquo;마지막 하트비트: 방금 전&rdquo;이 표시되어야 합니다
+										</li>
+										<li>• 홈 화면에 상태 표시줄이 보여야 합니다</li>
+									</ul>
+								</div>
+
+								<div className="space-y-2">
+									<p className="font-medium">모니터링 중지</p>
+									<p className="text-muted-foreground ml-2">
+										모니터링을 중지하려면 앱을 열고{" "}
+										<strong>&ldquo;모니터링 중지&rdquo;</strong> 버튼을 탭합니다. 알림창이
+										사라지고 상태가 &ldquo;중지됨&rdquo;으로 변경됩니다.
+									</p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+
+					{/* Troubleshooting */}
+					<Card className="border-2 bg-muted/30">
+						<CardHeader>
+							<CardTitle className="flex items-center gap-2">
+								<AlertCircle className="h-5 w-5" />
+								문제 해결
+							</CardTitle>
+							<CardDescription>자주 발생하는 문제와 해결 방법</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4 text-sm">
+							<div className="space-y-3">
+								<div className="space-y-1">
+									<p className="font-medium">❌ 접근성 권한이 자동으로 꺼짐</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										일부 기기(특히 샤오미, 화웨이)는 시스템 설정에서 접근성 권한을
+										자동으로 끌 수 있습니다. 설정 → 접근성 → Mapleting Monitor가 켜져
+										있는지 자주 확인하세요.
+									</p>
+								</div>
+
+								<div className="space-y-1">
+									<p className="font-medium">❌ 모니터링이 자동으로 중지됨</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										배터리 최적화가 제대로 해제되지 않았을 수 있습니다. 설정 → 배터리 →
+										배터리 최적화에서 Mapleting Monitor가 &ldquo;최적화 안 함&rdquo;으로
+										되어 있는지 확인하세요.
+									</p>
+								</div>
+
+								<div className="space-y-1">
+									<p className="font-medium">❌ 하트비트가 전송되지 않음</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										인터넷 연결을 확인하세요. Wi-Fi가 불안정하면 모바일 데이터를 사용해
+										보세요. 또한 시크릿 키가 올바른지 확인하세요.
+									</p>
+								</div>
+
+								<div className="space-y-1">
+									<p className="font-medium">❌ 알림이 오지 않음</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										웹사이트에서 푸시 알림을 구독했는지 확인하세요. 홈페이지로 이동하여
+										닉네임으로 조회한 후 알림을 활성화하세요.
+									</p>
+								</div>
+
+								<div className="space-y-1">
+									<p className="font-medium">❌ APK 설치가 안 됨</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										설정 → 보안에서 &ldquo;알 수 없는 출처&rdquo;를 허용했는지 확인하세요.
+										일부 제조사(삼성 등)는 추가 설정이 필요할 수 있습니다.
+									</p>
+								</div>
+
+								<div className="space-y-1">
+									<p className="font-medium">❌ 앱이 강제 종료됨</p>
+									<p className="text-muted-foreground text-xs ml-2">
+										설정 → 애플리케이션 → Mapleting Monitor → 배터리에서 &ldquo;배터리
+										사용 제한&rdquo;을 끄세요.
+									</p>
+								</div>
+							</div>
+
+							<Alert>
+								<BookOpen className="h-4 w-4" />
+								<AlertTitle>추가 도움이 필요하신가요?</AlertTitle>
+								<AlertDescription className="text-xs">
+									해결되지 않는 문제가 있으면{" "}
+									<a
+										href="https://github.com/shanefully-done/mapleting/issues"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-primary hover:underline font-medium"
+									>
+										GitHub Issues
+									</a>{" "}
+									에서 질문하거나 버그를 신고해 주세요. 기기 정보와 안드로이드 버전을
+									함께 알려주시면 더 빨리 도와드릴 수 있습니다.
+								</AlertDescription>
+							</Alert>
 						</CardContent>
 					</Card>
 
@@ -462,35 +480,6 @@ export default function SetupPage() {
 							</div>
 						</CardContent>
 					</Card>
-
-					{/* Support Card */}
-					<Card className="bg-muted/50">
-						<CardHeader>
-							<CardTitle className="text-base">문제 해결</CardTitle>
-						</CardHeader>
-						<CardContent className="space-y-2 text-sm text-muted-foreground">
-							<p>
-								<strong>ADB 연결이 안 될 때:</strong> 에뮬레이터에서 ADB 디버깅이
-								활성화되어 있는지 확인하고, 에뮬레이터를 재시작해 보세요.
-							</p>
-							<p>
-								<strong>알림이 안 올 때:</strong> 브라우저의 알림 권한을 확인하고,
-								모바일에서는 앱으로 설치되어 있는지 확인하세요.
-							</p>
-							<p>
-								<strong>추가 도움:</strong>{" "}
-								<a
-									href="https://github.com/shanefully-done/mapleting/issues"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-primary hover:underline"
-								>
-									GitHub Issues
-								</a>{" "}
-								에서 질문하거나 버그를 신고해 주세요.
-							</p>
-						</CardContent>
-					</Card>
 				</div>
 			</main>
 
@@ -498,12 +487,11 @@ export default function SetupPage() {
 			<footer className="border-t mt-12">
 				<div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
 					<p>MapleTing - 크로스 플랫폼 디바이스 모니터링 시스템</p>
+					<p className="text-xs mt-1">
+						안드로이드 앱으로 더 간편하게 모니터링하세요
+					</p>
 				</div>
 			</footer>
 		</div>
 	);
-}
-
-function Separator({ className }: { className?: string }) {
-	return <div className={`border-t ${className}`} />;
 }

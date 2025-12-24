@@ -1,5 +1,5 @@
 // POST /api/heartbeat endpoint
-// Receives status updates from Python clients and triggers push notifications on state transitions
+// Receives status updates from Android monitoring clients and triggers push notifications on state transitions
 
 import { NextRequest, NextResponse } from "next/server";
 import { nicknameRepository } from "@/lib/repositories/nickname-repository";
