@@ -87,7 +87,7 @@ export default function Home() {
 									className="block"
 								>
 									<div
-										className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
+										className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3 rounded-sm"
 										role="alert"
 									>
 										<p className="font-semibold text-sm flex items-center justify-center gap-2">
