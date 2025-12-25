@@ -44,4 +44,15 @@
     <string name="notification_running">Running</string>
     <string name="notification_stopped">Stopped</string>
     <string name="notification_last_heartbeat">Last heartbeat: %s</string>
+    
+    <!-- Update Checker -->
+    <string name="update_available_title">Update Available</string>
+    <string name="update_available_message">A new version of MapleTing Monitor is available!</string>
+    <string name="current_version">Current version: %s</string>
+    <string name="latest_version">Latest version: %s</string>
+    <string name="whats_new">What\'s New:</string>
+    <string name="update_now">Update Now</string>
+    <string name="update_later">Later</string>
+    <string name="update_remind_later">Remind Later</string>
+    <string name="update_download_failed">Unable to open download page</string>
 </resources>

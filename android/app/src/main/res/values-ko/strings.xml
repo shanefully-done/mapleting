@@ -45,4 +45,15 @@
     <string name="notification_running">실행 중</string>
     <string name="notification_stopped">중지됨</string>
     <string name="notification_last_heartbeat">마지막 하트비트: %s</string>
+    
+    <!-- Update Checker -->
+    <string name="update_available_title">업데이트 가능</string>
+    <string name="update_available_message">메이플팅 모니터의 새 버전이 사용 가능합니다!</string>
+    <string name="current_version">현재 버전: %s</string>
+    <string name="latest_version">최신 버전: %s</string>
+    <string name="whats_new">새로운 기능:</string>
+    <string name="update_now">지금 업데이트</string>
+    <string name="update_later">나중에</string>
+    <string name="update_remind_later">나중에 알림</string>
+    <string name="update_download_failed">다운로드 페이지를 열 수 없습니다</string>
 </resources>

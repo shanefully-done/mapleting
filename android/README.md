@@ -10,6 +10,7 @@ Native Android application for monitoring Android applications without requiring
 - **Background Operation**: Works even when app is not in foreground
 - **Low Battery Impact**: Efficient monitoring with minimal resource usage
 - **UTF-8 Support**: Full Unicode support for nicknames (Korean, Japanese, Chinese, etc.)
+- **Auto-Update Checks**: Notifies you when a new version is available
 
 ## Requirements
 
@@ -82,6 +83,31 @@ The app sends heartbeats to the Next.js server in the same format as the Python 
 - **FOREGROUND_SERVICE**: Required for background monitoring
 - **POST_NOTIFICATIONS**: Required for persistent notification (Android 13+)
 - **PACKAGE_USAGE_STATS**: Optional, for better app detection
+
+## Update Mechanism
+
+The app automatically checks for updates from GitHub releases on startup:
+
+- **Update Check**: Fetches latest release from GitHub API
+- **Version Comparison**: Compares current version with latest release
+- **Update Notification**: Shows dialog when a new version is available
+- **Download Link**: Direct link to download the latest APK
+
+### Release URL Pattern
+
+When publishing a new release, the APK should be named `mapleting-monitor.apk` and uploaded to the release assets. The download URL format is:
+
+```
+https://github.com/shanefully-done/mapleting/releases/download/v{version}/mapleting-monitor.apk
+```
+
+Example: `https://github.com/shanefully-done/mapleting/releases/download/v1.0.2/mapleting-monitor.apk`
+
+### Versioning
+
+- **Version Code**: Integer, incremented with each release (e.g., 1, 2, 3...)
+- **Version Name**: Semantic versioning (e.g., "1.0.0", "1.0.1", "1.1.0")
+- Version is stored in [`app/build.gradle.kts`](app/build.gradle.kts:14-15)
 
 ## Privacy
 

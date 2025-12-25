@@ -2,6 +2,7 @@ package com.mapleting.monitor
 
 import android.Manifest
 import android.app.ActivityManager
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,13 +19,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.mapleting.monitor.databinding.ActivityMainBinding
 import com.mapleting.monitor.data.MonitorConfig
+import com.mapleting.monitor.data.UpdateInfo
+import com.mapleting.monitor.network.UpdateChecker
 import com.mapleting.monitor.service.ForegroundAccessibilityService
 import com.mapleting.monitor.service.MonitoringService
 import com.mapleting.monitor.utils.AccessibilityUtils
 import com.mapleting.monitor.viewmodel.MonitoringState
 import com.mapleting.monitor.viewmodel.MonitoringViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     
@@ -57,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         checkBatteryOptimization()
         checkAccessibilityPermission()
+        checkForUpdates()
     }
     
     override fun onResume() {
@@ -352,6 +358,86 @@ class MainActivity : AppCompatActivity() {
                 data = Uri.parse("package:$packageName")
             }
             startActivity(intent)
+        }
+    }
+    
+    /**
+     * Check for app updates from GitHub releases
+     */
+    private fun checkForUpdates() {
+        lifecycleScope.launch {
+            try {
+                val updateChecker = UpdateChecker(this@MainActivity)
+                val updateInfo = updateChecker.checkForUpdates()
+                
+                updateInfo?.let { info ->
+                    if (info.isUpdateAvailable) {
+                        showUpdateDialog(info)
+                    }
+                }
+            } catch (e: Exception) {
+                // Silently fail on update check errors
+                // Don't interrupt user experience with update errors
+            }
+        }
+    }
+    
+    /**
+     * Show update available dialog
+     */
+    private fun showUpdateDialog(updateInfo: UpdateInfo) {
+        val currentVersion = try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName
+        } catch (e: Exception) {
+            "unknown"
+        }
+        
+        val message = StringBuilder()
+        message.append(getString(R.string.update_available_message))
+        message.append("\n\n")
+        message.append(getString(R.string.current_version, currentVersion))
+        message.append("\n")
+        message.append(getString(R.string.latest_version, updateInfo.latestVersion))
+        
+        // Add release notes if available
+        if (updateInfo.releaseNotes.isNotBlank()) {
+            message.append("\n\n")
+            message.append(getString(R.string.whats_new))
+            message.append("\n")
+            message.append(updateInfo.releaseNotes.take(500)) // Limit to 500 chars
+            if (updateInfo.releaseNotes.length > 500) {
+                message.append("...")
+            }
+        }
+        
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.update_available_title))
+            .setMessage(message.toString())
+            .setPositiveButton(getString(R.string.update_now)) { _, _ ->
+                openDownloadPage(updateInfo.downloadUrl)
+            }
+            .setNegativeButton(getString(R.string.update_later), null)
+            .setNeutralButton(getString(R.string.update_remind_later)) { _, _ ->
+                // Option to remind later - could implement with SharedPreferences
+            }
+            .setCancelable(false)
+            .show()
+    }
+    
+    /**
+     * Open the download page in browser
+     */
+    private fun openDownloadPage(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(
+                this,
+                getString(R.string.update_download_failed),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 }
