@@ -55,4 +55,8 @@
     <string name="update_later">Later</string>
     <string name="update_remind_later">Remind Later</string>
     <string name="update_download_failed">Unable to open download page</string>
+    <string name="check_for_updates">Check for Updates</string>
+    <string name="checking_version">Checking version…</string>
+    <string name="version_up_to_date">You have the latest version (%s)</string>
+    <string name="check_update_error">Failed to check for updates</string>
 </resources>

@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         checkBatteryOptimization()
         checkAccessibilityPermission()
-        checkForUpdates()
+        updateCurrentVersionDisplay()
+        checkForUpdatesOnStartup()
     }
     
     override fun onResume() {
@@ -95,6 +96,11 @@ class MainActivity : AppCompatActivity() {
         // Accessibility permission button
         binding.accessibilityPermissionButton.setOnClickListener {
             AccessibilityUtils.openAccessibilitySettings(this)
+        }
+        
+        // Check for updates button
+        binding.checkUpdateButton.setOnClickListener {
+            manuallyCheckForUpdates()
         }
         
         // Text change listener for validation feedback
@@ -362,9 +368,22 @@ class MainActivity : AppCompatActivity() {
     }
     
     /**
-     * Check for app updates from GitHub releases
+     * Update the current version display
      */
-    private fun checkForUpdates() {
+    private fun updateCurrentVersionDisplay() {
+        val currentVersion = try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName ?: "unknown"
+        } catch (e: Exception) {
+            "unknown"
+        }
+        binding.currentVersionTextView.text = getString(R.string.current_version, currentVersion)
+    }
+    
+    /**
+     * Check for updates on app startup (silent, only shows dialog if update available)
+     */
+    private fun checkForUpdatesOnStartup() {
         lifecycleScope.launch {
             try {
                 val updateChecker = UpdateChecker(this@MainActivity)
@@ -378,6 +397,52 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 // Silently fail on update check errors
                 // Don't interrupt user experience with update errors
+            }
+        }
+    }
+    
+    /**
+     * Manually check for updates (shows result to user)
+     */
+    private fun manuallyCheckForUpdates() {
+        binding.checkUpdateButton.isEnabled = false
+        binding.currentVersionTextView.text = getString(R.string.checking_version)
+        
+        lifecycleScope.launch {
+            try {
+                val updateChecker = UpdateChecker(this@MainActivity)
+                val updateInfo = updateChecker.checkForUpdates()
+                
+                updateInfo?.let { info ->
+                    if (info.isUpdateAvailable) {
+                        showUpdateDialog(info)
+                    } else {
+                        // No update available, show message
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.version_up_to_date, info.latestVersion),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    updateCurrentVersionDisplay()
+                } ?: run {
+                    // Error checking for updates
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.check_update_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    updateCurrentVersionDisplay()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.check_update_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateCurrentVersionDisplay()
+            } finally {
+                binding.checkUpdateButton.isEnabled = true
             }
         }
     }

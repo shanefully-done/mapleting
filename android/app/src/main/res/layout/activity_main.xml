@@ -226,6 +226,25 @@
             android:text="@string/open_accessibility_settings"
             android:icon="@android:drawable/ic_menu_add"
             style="@style/Widget.Material3.Button.OutlinedButton"
+            app:cornerRadius="8dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Check for Updates Section -->
+        <TextView
+            android:id="@+id/currentVersionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/checking_version"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/checkUpdateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_for_updates"
+            android:icon="@android:drawable/ic_menu_info_details"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             app:cornerRadius="8dp" />
 
     </LinearLayout>

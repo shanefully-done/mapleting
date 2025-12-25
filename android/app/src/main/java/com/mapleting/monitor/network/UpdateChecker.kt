@@ -42,12 +42,14 @@ class UpdateChecker(private val context: Context) {
     suspend fun checkForUpdates(): UpdateInfo? = withContext(Dispatchers.IO) {
         try {
             val currentVersion = getCurrentVersionName()
-            val currentVersionCode = getCurrentVersionCode()
             
             if (currentVersion == null) {
                 Log.e(TAG, "Unable to get current version")
                 return@withContext null
             }
+            
+            // Remove 'v' prefix from current version if present
+            val currentVersionClean = currentVersion.removePrefix("v")
             
             // Fetch latest release from GitHub
             val release = fetchLatestRelease() ?: return@withContext null
@@ -55,7 +57,8 @@ class UpdateChecker(private val context: Context) {
             // Parse version from tag (e.g., "v1.0.2" -> "1.0.2")
             val latestVersion = release.tag_name.removePrefix("v")
             
-            // Calculate version code from version string
+            // Calculate version codes from both versions for consistent comparison
+            val currentVersionCode = calculateVersionCode(currentVersionClean)
             val latestVersionCode = calculateVersionCode(latestVersion)
             
             // Find APK download URL
@@ -124,24 +127,6 @@ class UpdateChecker(private val context: Context) {
         } catch (e: Exception) {
             Log.e(TAG, "Unable to get current version name", e)
             null
-        }
-    }
-    
-    /**
-     * Get current version code from BuildConfig
-     */
-    private fun getCurrentVersionCode(): Int {
-        return try {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                packageInfo.longVersionCode.toInt()
-            } else {
-                @Suppress("DEPRECATION")
-                packageInfo.versionCode
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Unable to get current version code", e)
-            0
         }
     }
     

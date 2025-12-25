@@ -56,4 +56,8 @@
     <string name="update_later">나중에</string>
     <string name="update_remind_later">나중에 알림</string>
     <string name="update_download_failed">다운로드 페이지를 열 수 없습니다</string>
+    <string name="check_for_updates">업데이트 확인</string>
+    <string name="checking_version">버전 확인 중…</string>
+    <string name="version_up_to_date">최신 버전입니다 (%s)</string>
+    <string name="check_update_error">업데이트 확인 실패</string>
 </resources>
