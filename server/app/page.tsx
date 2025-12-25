@@ -142,7 +142,7 @@ export default function Home() {
 						<CardHeader>
 							<CardTitle>시작하기</CardTitle>
 							<CardDescription>
-								모니터링 클라이언트를 설치하고 알림을 받아보세요
+								먼저 모니터링 앱을 설치하고 알림을 받아보세요
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -168,22 +168,25 @@ export default function Home() {
 						<CardContent className="space-y-4">
 							<ol className="list-decimal list-inside space-y-2 text-sm">
 								<li>
-									<strong>설정 가이드 확인</strong> - 모니터링 클라이언트를 설치하고
-									설정하세요
+									<strong>설정 가이드 확인</strong> - 모니터링 앱을 설치하고 설정하세요
 								</li>
 								<li>
-									<strong>캐릭터 닉네임 입력</strong> - 위 입력창에 캐릭터 닉네임을
+									<strong>알림 받을 기기로 접속</strong> - 알림을 받을 기기로 이
+									웹페이지를 방문하세요
+								</li>
+								<li>
+									<strong>캐릭터 닉네임 입력</strong> - 위 캐릭터명 입력창에 닉네임을
 									입력하고 &ldquo;조회&rdquo; 버튼을 클릭하세요
 								</li>
 								<li>
 									<strong>알림 활성화</strong> - 브라우저에서 푸시 알림을 허용하세요
 								</li>
 								<li>
-									<strong>알림 수신</strong> - 디바이스가 오프라인되면 즉시 알림을
-									받습니다
+									<strong>알림 수신</strong> - 메이플키우기가 팅기면 즉시 알림을 받습니다
 								</li>
 								<li>
-									<strong>앱으로 설치</strong> - 모바일은 홈 화면에 추가하세요
+									<strong>앱으로 설치</strong> - 아이폰/아이패드를 비롯한 일부 기기는 홈
+									화면에 앱을 추가하해야 작동합니다
 								</li>
 							</ol>
 						</CardContent>

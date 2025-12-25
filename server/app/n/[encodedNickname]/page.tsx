@@ -77,7 +77,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 
 	let nickname: string;
 	let decodeError = false;
-	
+
 	try {
 		nickname = decodeNicknameFromUrl(encodedNickname);
 	} catch (error) {
@@ -187,7 +187,7 @@ export default async function NicknameDetailPage({ params }: PageProps) {
 						<CardHeader>
 							<CardTitle>알림</CardTitle>
 							<CardDescription>
-								이 캐릭터가 튕길 경우 푸시 알림을 받으려면 구독하세요
+								이 캐릭터가 팅길 경우 푸시 알림을 받으려면 구독하세요
 							</CardDescription>
 						</CardHeader>
 						<CardContent>

@@ -51,7 +51,7 @@ export default function SetupPage() {
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm">
 							<p>
-								메이플팅은 안드로이드 앱을 통해 기기에서 메이플스토리가 완전히 튕긴 경우
+								메이플팅은 안드로이드 앱을 통해 기기에서 메이플스토리가 완전히 팅긴 경우
 								웹 푸시 알림을 받을 수 있는 서비스입니다.
 							</p>
 							<p className="text-muted-foreground">

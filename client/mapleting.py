@@ -254,7 +254,7 @@ def main():
                 send_heartbeat(server_url, nickname, "connected", timestamp_ms)
 
             if was_running and not running:
-                print(f"⚠️ {nickname}: 앱이 튕겼습니다")
+                print(f"⚠️ {nickname}: 앱이 팅겼습니다")
                 # Send disconnected heartbeat
                 timestamp_ms = int(time.time() * 1000)
                 success = send_heartbeat(server_url, nickname, "disconnected", timestamp_ms)

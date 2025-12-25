@@ -219,7 +219,7 @@ export function createNotificationPayload(
 	status: "connected" | "disconnected",
 	timestamp: number
 ): PushNotificationPayload {
-	const statusText = status === "connected" ? "살아있음" : "튕김";
+	const statusText = status === "connected" ? "살아있음" : "팅김";
 	const encodedNickname = encodeNicknameForUrl(nickname);
 
 	return {

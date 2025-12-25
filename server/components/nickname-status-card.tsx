@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, RefreshCw, Clock } from "lucide-react";
@@ -50,9 +56,7 @@ function UptimeDisplay({ timestamp }: UptimeDisplayProps) {
 	return (
 		<div className="flex items-center gap-2 text-sm text-muted-foreground">
 			<Clock className="h-4 w-4" />
-			<span>
-				경과 시간: {formatUptime()}
-			</span>
+			<span>경과 시간: {formatUptime()}</span>
 		</div>
 	);
 }
@@ -97,14 +101,16 @@ export function NicknameStatusCard({ initialData }: NicknameStatusCardProps) {
 		setCooldownRemaining(REFRESH_COOLDOWN_MS);
 
 		try {
-			const response = await fetch(`/api/nickname?nickname=${encodeURIComponent(data.nickname)}`);
-			
+			const response = await fetch(
+				`/api/nickname?nickname=${encodeURIComponent(data.nickname)}`
+			);
+
 			if (!response.ok) {
 				throw new Error("Failed to fetch nickname data");
 			}
 
 			const newData = await response.json();
-			
+
 			if (newData.data) {
 				setData(newData.data);
 			}
@@ -121,9 +127,7 @@ export function NicknameStatusCard({ initialData }: NicknameStatusCardProps) {
 				<div className="flex items-start justify-between">
 					<div className="space-y-1">
 						<CardTitle className="text-2xl">{data.nickname}</CardTitle>
-						<CardDescription>
-							게임이 완전히 튕긴 경우에만 감지됩니다
-						</CardDescription>
+						<CardDescription>게임이 완전히 팅긴 경우에만 감지됩니다</CardDescription>
 					</div>
 					<div className="flex items-center gap-2">
 						<Badge
