@@ -168,11 +168,14 @@ export default function Home() {
 						<CardContent className="space-y-4">
 							<ol className="list-decimal list-inside space-y-2 text-sm">
 								<li>
-									<strong>설정 가이드 확인</strong> - 모니터링 앱을 설치하고 설정하세요
+									<strong>
+										<Link href="/">설정 가이드 확인</Link>
+									</strong>{" "}
+									- 안드로이드에 모니터링 앱을 설치하고 설정하세요
 								</li>
 								<li>
-									<strong>알림 받을 기기로 접속</strong> - 알림을 받을 기기로 이
-									웹페이지를 방문하세요
+									<strong>알림 받을 기기로 접속</strong> - 알림을 받을 기기로{" "}
+									<Link href="/">이 웹페이지</Link>를 방문하세요
 								</li>
 								<li>
 									<strong>캐릭터 닉네임 입력</strong> - 위 캐릭터명 입력창에 닉네임을
@@ -185,8 +188,8 @@ export default function Home() {
 									<strong>알림 수신</strong> - 메이플키우기가 팅기면 즉시 알림을 받습니다
 								</li>
 								<li>
-									<strong>앱으로 설치</strong> - 아이폰/아이패드를 비롯한 일부 기기는 홈
-									화면에 앱을 추가하해야 작동합니다
+									<strong>앱으로 설치</strong> - 아이폰/아이패드는 사파리에서 홈 화면에
+									이 사이트를 추가하해야 작동합니다
 								</li>
 							</ol>
 						</CardContent>

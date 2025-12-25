@@ -447,37 +447,26 @@ export default function SetupPage() {
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-4">
-							<ol className="list-decimal list-inside space-y-3 text-sm">
-								<li className="pl-2">
-									<strong>홈페이지로 이동</strong> - 상단의 &ldquo;홈으로&rdquo; 버튼을
-									클릭하거나{" "}
-									<Link href="/" className="text-primary hover:underline">
-										여기
-									</Link>{" "}
-									를 클릭하세요
+							<ol className="list-decimal list-inside space-y-2 text-sm">
+								<li>
+									<strong>알림 받을 기기로 접속</strong> - 알림을 받을 기기로{" "}
+									<Link href="/">이 웹페이지</Link>를 방문하세요
 								</li>
-								<li className="pl-2">
-									<strong>캐릭터 닉네임 입력</strong> - 입력창에 캐릭터 닉네임을 입력하고
-									&ldquo;조회&rdquo; 버튼을 클릭하세요
+								<li>
+									<strong>캐릭터 닉네임 입력</strong> - 위 캐릭터명 입력창에 닉네임을
+									입력하고 &ldquo;조회&rdquo; 버튼을 클릭하세요
 								</li>
-								<li className="pl-2">
+								<li>
 									<strong>알림 활성화</strong> - 브라우저에서 푸시 알림을 허용하세요
 								</li>
-								<li className="pl-2">
-									<strong>앱으로 설치</strong> - 모바일은 홈 화면에 추가하여 앱처럼
-									사용하세요 (PWA)
+								<li>
+									<strong>알림 수신</strong> - 메이플키우기가 팅기면 즉시 알림을 받습니다
 								</li>
-								<li className="pl-2">
-									<strong>알림 수신</strong> - 디바이스가 오프라인되면 즉시 알림을
-									받습니다
+								<li>
+									<strong>앱으로 설치</strong> - 아이폰/아이패드는 사파리에서 홈 화면에
+									이 사이트를 추가하해야 작동합니다
 								</li>
 							</ol>
-							<div className="pt-2 border-t">
-								<p className="text-xs text-muted-foreground">
-									<strong>💡 참고</strong> 일부 모바일 기기에서는 웹앱으로 설치해야
-									브라우저가 꺼져 있거나 백그라운드 상태에서도 알림을 받을 수 있습니다.
-								</p>
-							</div>
 						</CardContent>
 					</Card>
 				</div>
